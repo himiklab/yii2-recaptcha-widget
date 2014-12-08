@@ -1,0 +1,25 @@
+{
+    "name": "himiklab/yii2-recaptcha-widget",
+    "description": "Yii2 Google reCAPTCHA widget",
+    "keywords": ["yii2", "captcha", "recaptcha", "google", "widget"],
+    "type": "yii2-extension",
+    "license": "MIT",
+    "support": {
+        "source": "https://github.com/himiklab/yii2-recaptcha-widget",
+        "issues": "https://github.com/himiklab/yii2-recaptcha-widget/issues"
+    },
+    "authors": [
+        {
+            "name": "HimikLab",
+            "homepage": "https://github.com/himiklab/"
+        }
+    ],
+    "require": {
+        "yiisoft/yii2": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "himiklab\\yii2\\recaptcha\\": ""
+        }
+    }
+}
