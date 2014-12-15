@@ -104,22 +104,19 @@ class ReCaptcha extends InputWidget
         echo Html::tag('div', '', $divOptions);
     }
 
-    /**
-     * @return string
-     */
     protected function getLanguageSuffix()
     {
         $currentAppLanguage = Yii::$app->language;
-        $langsExceptions = ['zh_CN', 'zh_TW', 'zh_TW'];
+        $langsExceptions = ['zh-CN', 'zh-TW', 'zh-TW'];
 
-        if (strpos($currentAppLanguage, '_') === false) {
+        if (strpos($currentAppLanguage, '-') === false) {
             return $currentAppLanguage;
         }
 
         if (in_array($currentAppLanguage, $langsExceptions)) {
-            return str_replace('_', '-', $currentAppLanguage);
+            return $currentAppLanguage;
         } else {
-            return substr($currentAppLanguage, 0, strpos($currentAppLanguage, '_'));
+            return substr($currentAppLanguage, 0, strpos($currentAppLanguage, '-'));
         }
     }
 
