@@ -86,13 +86,13 @@ class ReCaptcha extends InputWidget
             'class' => 'g-recaptcha',
             'data-sitekey' => $this->siteKey
         ];
-        if (empty($this->jsCallback)) {
+        if (!empty($this->jsCallback)) {
             $divOptions['data-callback'] = $this->jsCallback;
         }
-        if (empty($this->theme)) {
+        if (!empty($this->theme)) {
             $divOptions['data-theme'] = $this->theme;
         }
-        if (empty($this->type)) {
+        if (!empty($this->type)) {
             $divOptions['data-type'] = $this->type;
         }
 
