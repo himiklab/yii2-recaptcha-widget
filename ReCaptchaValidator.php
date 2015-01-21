@@ -34,7 +34,11 @@ class ReCaptchaValidator extends Validator
     {
         parent::init();
         if (strlen($this->secret) === 0) {
-            throw new InvalidConfigException('Required `secret` param isn\'t set.');
+            if(!emtpy(\Yii::$app->reCaptcha->secret)){
+                $this->secret = \Yii::$app->reCaptcha->secret;
+            } else {
+                throw new InvalidConfigException('Required `secret` param isn\'t set.');
+            }
         }
 
         if ($this->message === null) {
