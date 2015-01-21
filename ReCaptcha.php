@@ -53,11 +53,6 @@ class ReCaptcha extends InputWidget
 
     /** @var string Your secret. */
     public $secret;
-    
-    public $_definitions = [
-        'secret',
-        'siteKey'
-    ];
 
     /** @var string The color theme of the widget. [[THEME_LIGHT]] (default) or [[THEME_DARK]] */
     public $theme;
@@ -74,11 +69,10 @@ class ReCaptcha extends InputWidget
     public function init()
     {
         parent::init();
-        
 
         if (empty($this->siteKey)) {
-            if(!empty(\Yii::$app->reCaptcha->siteKey)){
-                $this->siteKey = \Yii::$app->reCaptcha->siteKey;
+            if (!empty(Yii::$app->reCaptcha->siteKey)) {
+                $this->siteKey = Yii::$app->reCaptcha->siteKey;
             } else {
                 throw new InvalidConfigException('Required `siteKey` param isn\'t set.');
             }
