@@ -30,6 +30,9 @@ class ReCaptchaValidator extends Validator
     /** @var string The shared key between your site and ReCAPTCHA. */
     public $secret;
     
+    /** @var boolean Whether to enable response caching. */
+    public $enableCache = false;
+    
     /** @var string Cache component. */
     public $cache = 'cache';
     
@@ -82,7 +85,7 @@ class ReCaptchaValidator extends Validator
         }
         
         $cacheID = "reCAPTCHA::$value";
-        if($this->cache && ($captchaResult = Yii::$app->get($this->cache)->get($cacheID)) !== false) {
+        if($this->enableCache && $this->cache && ($captchaResult = Yii::$app->get($this->cache)->get($cacheID)) !== false) {
             return $captchaResult;
         }
 
@@ -98,7 +101,7 @@ class ReCaptchaValidator extends Validator
             throw new Exception('Invalid recaptcha verify response.');
         }
         $captchaResult = $response['success'] ? null : [$this->message, []];
-        if($this->cache) {
+        if($this->enableCache && $this->cache) {
             Yii::$app->get($this->cache)->set($cacheID, $captchaResult, $this->cacheDuration);
         }
         return $captchaResult;
