@@ -29,6 +29,15 @@ class ReCaptchaValidator extends Validator
 
     /** @var string The shared key between your site and ReCAPTCHA. */
     public $secret;
+    
+    /** @var boolean Whether to enable response caching. */
+    public $enableCache = false;
+    
+    /** @var string Cache component. */
+    public $cache = 'cache';
+    
+    /** @var int Cache duration (2 min.) */
+    public $cacheDuration = 120;
 
     public function init()
     {
@@ -95,7 +104,15 @@ class ReCaptchaValidator extends Validator
      */
     protected function getResponse($request)
     {
+        $cacheID = "reCAPTCHA::$request";
+        if($this->enableCache && $this->cache && ($response = Yii::$app->get($this->cache)->get($cacheID)) !== false) {
+            return $response;
+        }
         $response = file_get_contents($request);
-        return Json::decode($response, true);
+        $response = Json::decode($response);
+        if($this->enableCache && $this->cache) {
+            Yii::$app->get($this->cache)->set($cacheID, $response, $this->cacheDuration);
+        }
+        return $response;
     }
 }
