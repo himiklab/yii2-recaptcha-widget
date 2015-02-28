@@ -83,11 +83,6 @@ class ReCaptchaValidator extends Validator
                 return [$this->message, []];
             }
         }
-        
-        $cacheID = "reCAPTCHA::$value";
-        if($this->enableCache && $this->cache && ($captchaResult = Yii::$app->get($this->cache)->get($cacheID)) !== false) {
-            return $captchaResult;
-        }
 
         $request = self::SITE_VERIFY_URL . '?' . http_build_query(
             [
@@ -100,11 +95,7 @@ class ReCaptchaValidator extends Validator
         if (!isset($response['success'])) {
             throw new Exception('Invalid recaptcha verify response.');
         }
-        $captchaResult = $response['success'] ? null : [$this->message, []];
-        if($this->enableCache && $this->cache) {
-            Yii::$app->get($this->cache)->set($cacheID, $captchaResult, $this->cacheDuration);
-        }
-        return $captchaResult;
+        return $response['success'] ? null : [$this->message, []];
     }
 
     /**
@@ -113,7 +104,15 @@ class ReCaptchaValidator extends Validator
      */
     protected function getResponse($request)
     {
+        $cacheID = "reCAPTCHA::$request";
+        if($this->enableCache && $this->cache && ($response = Yii::$app->get($this->cache)->get($cacheID)) !== false) {
+            return $response;
+        }
         $response = file_get_contents($request);
-        return Json::decode($response, true);
+        $response = Json::decode($response);
+        if($this->enableCache && $this->cache) {
+            Yii::$app->get($this->cache)->set($cacheID, $response, $this->cacheDuration);
+        }
+        return $response;
     }
 }
