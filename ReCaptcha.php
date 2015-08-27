@@ -66,10 +66,8 @@ class ReCaptcha extends InputWidget
     /** @var array Additional html widget options, such as `class`. */
     public $widgetOptions = [];
 
-    public function init()
+    public function run()
     {
-        parent::init();
-
         if (empty($this->siteKey)) {
             if (!empty(Yii::$app->reCaptcha->siteKey)) {
                 $this->siteKey = Yii::$app->reCaptcha->siteKey;
@@ -83,10 +81,7 @@ class ReCaptcha extends InputWidget
             self::JS_API_URL . '?hl=' . $this->getLanguageSuffix(),
             ['position' => $view::POS_HEAD]
         );
-    }
 
-    public function run()
-    {
         $this->customFieldPrepare();
 
         $divOptions = [
