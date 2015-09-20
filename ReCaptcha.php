@@ -48,6 +48,9 @@ class ReCaptcha extends InputWidget
     const TYPE_IMAGE = 'image';
     const TYPE_AUDIO = 'audio';
 
+    const SIZE_NORMAL = 'normal';
+    const SIZE_COMPACT = 'compact';
+
     /** @var string Your sitekey. */
     public $siteKey;
 
@@ -59,6 +62,9 @@ class ReCaptcha extends InputWidget
 
     /** @var string The type of CAPTCHA to serve. [[TYPE_IMAGE]] (default) or [[TYPE_AUDIO]] */
     public $type;
+
+    /** @var string The size of the widget. [[SIZE_NORMAL]] (default) or [[SIZE_COMPACT]] */
+    public $size;
 
     /** @var string Your JS callback function that's executed when the user submits a successful CAPTCHA response. */
     public $jsCallback;
@@ -96,6 +102,9 @@ class ReCaptcha extends InputWidget
         }
         if (!empty($this->type)) {
             $divOptions['data-type'] = $this->type;
+        }
+        if (!empty($this->size)) {
+            $divOptions['data-size'] = $this->size;
         }
 
         if (isset($this->widgetOptions['class'])) {
