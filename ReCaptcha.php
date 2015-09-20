@@ -40,7 +40,7 @@ use yii\widgets\InputWidget;
  */
 class ReCaptcha extends InputWidget
 {
-    const JS_API_URL = 'https://www.google.com/recaptcha/api.js';
+    const JS_API_URL = '//www.google.com/recaptcha/api.js';
 
     const THEME_LIGHT = 'light';
     const THEME_DARK = 'dark';
