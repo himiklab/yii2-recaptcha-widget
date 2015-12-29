@@ -69,7 +69,7 @@ class ReCaptcha extends InputWidget
     /** @var int The tabindex of the widget  */
     public $tabindex;
 
-    /** @var string Your JS callback function that's executed when the recaptcha response expires and the user needs to solve a new CAPTCHA. */
+    /** @var string Your JS callback function that's executed when the user submits a successful CAPTCHA response. */
     public $jsCallback;
 
     /** @var array Additional html widget options, such as `class`. */
@@ -112,6 +112,7 @@ class ReCaptcha extends InputWidget
         if (!empty($this->tabindex)) {
             $divOptions['data-tabindex'] = $this->tabindex;
         }
+
 
         if (isset($this->widgetOptions['class'])) {
             $divOptions['class'] = "{$divOptions['class']} {$this->widgetOptions['class']}";
