@@ -29,6 +29,8 @@ class ReCaptchaValidator extends Validator
 
     /** @var string The shared key between your site and ReCAPTCHA. */
     public $secret;
+    
+    public $uncheckedMessage;
 
     public function init()
     {
@@ -54,7 +56,7 @@ class ReCaptchaValidator extends Validator
      */
     public function clientValidateAttribute($model, $attribute, $view)
     {
-        $message = Yii::t(
+        $message = $this->uncheckedMessage ? $this->uncheckedMessage : Yii::t(
             'yii',
             '{attribute} cannot be blank.',
             ['attribute' => $model->getAttributeLabel($attribute)]
