@@ -108,6 +108,30 @@ or simply
 <?= \himiklab\yii2\recaptcha\ReCaptcha::widget(['name' => 'reCaptcha']) ?>
 ```
 
+Multiple reCaptcha on a one page
+-----
+Each the reCaptcha instance must have unique id
+```php
+<?= $form1->field($modelForm1, 'reCaptcha')
+    ->widget(\himiklab\yii2\recaptcha\ReCaptcha::className(), [
+        'widgetOptions' => [
+            'id' => 're-captcha-form1',
+        ]
+    ]) ?>
+
+<?= $form2->field($modelForm2, 'reCaptcha')
+    ->widget(\himiklab\yii2\recaptcha\ReCaptcha::className(), [
+        'widgetOptions' => [
+            'id' => 're-captcha-form2',
+        ]
+    ]) ?>
+```
+If you use one model in a few forms (ex. feedback form) must use unique ids.
+
+Notes
+-----
+Exclude a reCaptcha field from ajax validation. It creates problem.
+
 Resources
 ---------
 * [Google reCAPTCHA](https://developers.google.com/recaptcha)
