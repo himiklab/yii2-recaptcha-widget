@@ -75,8 +75,13 @@ class ReCaptcha extends InputWidget
     /** @var array Additional html widget options, such as `class`. */
     public $widgetOptions = [];
 
-    public function run()
+    /** @var string Stores the id field input, to generate the id widget. */
+    private $inputId;
+
+    public function init()
     {
+        parent::init();
+
         if (empty($this->siteKey)) {
             if (!empty(Yii::$app->reCaptcha->siteKey)) {
                 $this->siteKey = Yii::$app->reCaptcha->siteKey;
@@ -88,31 +93,17 @@ class ReCaptcha extends InputWidget
         $view = $this->view;
         $view->registerJsFile(
             self::JS_API_URL . '?hl=' . $this->getLanguageSuffix(),
-            ['position' => $view::POS_HEAD]
+            ['position' => $view::POS_END]
         );
+    }
 
+    public function run()
+    {
         $this->customFieldPrepare();
 
         $divOptions = [
-            'class' => 'g-recaptcha',
-            'data-sitekey' => $this->siteKey
+            'id' => $this->inputId . '-widget'
         ];
-        if (!empty($this->jsCallback)) {
-            $divOptions['data-callback'] = $this->jsCallback;
-        }
-        if (!empty($this->theme)) {
-            $divOptions['data-theme'] = $this->theme;
-        }
-        if (!empty($this->type)) {
-            $divOptions['data-type'] = $this->type;
-        }
-        if (!empty($this->size)) {
-            $divOptions['data-size'] = $this->size;
-        }
-        if (!empty($this->tabindex)) {
-            $divOptions['data-tabindex'] = $this->tabindex;
-        }
-
 
         if (isset($this->widgetOptions['class'])) {
             $divOptions['class'] = "{$divOptions['class']} {$this->widgetOptions['class']}";
@@ -154,9 +145,23 @@ class ReCaptcha extends InputWidget
         } else {
             $jsCode = "var recaptchaCallback = function(response){jQuery('#{$inputId}').val(response); {$this->jsCallback}(response);};";
         }
-        $this->jsCallback = 'recaptchaCallback';
 
-        $view->registerJs($jsCode, $view::POS_BEGIN);
+        $funName = 'reCaptchaWorker' . $this->model->formName();
+
+        $jsParam = "'sitekey': '{$this->siteKey}'";
+        $jsParam .= empty($this->jsCallback)? ", 'callback': recaptchaCallback" : ", 'callback': {$this->jsCallback}";
+        $jsParam .= empty($this->type)? '' : ", 'type': '{$this->type}'";
+        $jsParam .= empty($this->size)? '' : ", 'size': '{$this->size}'";
+        $jsParam .= empty($this->theme)? '' : ", 'theme': '{$this->theme}'";
+        $jsParam .= empty($this->tabindex)? '' : ", 'tabindex': '{$this->tabindex}'";
+
+        $jsCode .= "function {$funName}(){try {grecaptcha.render('{$inputId}-widget', {{$jsParam}});} catch (e) {setTimeout({$funName}, 500);}}{$funName}();";
+        
+        $this->jsCallback = 'recaptchaCallback';
+        $this->inputId = $inputId;
+
+        $view->registerJs($jsCode, $view::POS_READY);
+
         echo Html::input('hidden', $inputName, null, ['id' => $inputId]);
     }
 }
