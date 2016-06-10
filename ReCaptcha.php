@@ -71,6 +71,9 @@ class ReCaptcha extends InputWidget
 
     /** @var string Your JS callback function that's executed when the user submits a successful CAPTCHA response. */
     public $jsCallback;
+    
+    /** @var string Your JS callback function that's executed when the recaptcha response expires and the user needs to solve a new CAPTCHA. */
+    public $jsExpiredCallback;
 
     /** @var array Additional html widget options, such as `class`. */
     public $widgetOptions = [];
@@ -99,6 +102,9 @@ class ReCaptcha extends InputWidget
         ];
         if (!empty($this->jsCallback)) {
             $divOptions['data-callback'] = $this->jsCallback;
+        }
+        if (!empty($this->jsExpiredCallback)) {
+            $divOptions['data-expired-callback'] = $this->jsExpiredCallback;
         }
         if (!empty($this->theme)) {
             $divOptions['data-theme'] = $this->theme;
@@ -155,8 +161,16 @@ class ReCaptcha extends InputWidget
             $jsCode = "var recaptchaCallback = function(response){jQuery('#{$inputId}').val(response); {$this->jsCallback}(response);};";
         }
         $this->jsCallback = 'recaptchaCallback';
+        
+        if (empty($this->jsExpiredCallback)) {
+            $jsExpCode = "var recaptchaExpiredCallback = function(){jQuery('#{$inputId}').val('');};";
+        } else {
+            $jsExpCode = "var recaptchaExpiredCallback = function(){jQuery('#{$inputId}').val(''); {$this->jsExpiredCallback}(response);};";
+        }
+        $this->jsExpiredCallback = 'recaptchaExpiredCallback';
 
         $view->registerJs($jsCode, $view::POS_BEGIN);
+        $view->registerJs($jsExpCode, $view::POS_BEGIN);
         echo Html::input('hidden', $inputName, null, ['id' => $inputId]);
     }
 }
