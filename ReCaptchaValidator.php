@@ -83,13 +83,11 @@ class ReCaptchaValidator extends Validator
             }
         }
 
-        $request = self::SITE_VERIFY_URL . '?' . http_build_query(
-                [
-                    'secret' => $this->secret,
-                    'response' => $value,
-                    'remoteip' => Yii::$app->request->userIP
-                ]
-            );
+        $request = self::SITE_VERIFY_URL . '?' . http_build_query([
+                'secret' => $this->secret,
+                'response' => $value,
+                'remoteip' => Yii::$app->request->userIP
+            ]);
         $response = $this->getResponse($request);
         if (!isset($response['success'])) {
             throw new Exception('Invalid recaptcha verify response.');
@@ -107,16 +105,17 @@ class ReCaptchaValidator extends Validator
         if ($this->grabberType === self::GRABBER_PHP) {
             $response = @file_get_contents($request);
 
-            if ($response === false)
+            if ($response === false) {
                 throw new Exception('Unable connection to the captcha server.');
+            }
         } else {
             $options = array(
-                CURLOPT_CUSTOMREQUEST => "GET",     //set request type post or get
+                CURLOPT_CUSTOMREQUEST => 'GET',     //set request type post or get
                 CURLOPT_POST => false,              //set to GET
                 CURLOPT_RETURNTRANSFER => true,     // return web page
                 CURLOPT_HEADER => false,            // don't return headers
                 CURLOPT_FOLLOWLOCATION => true,     // follow redirects
-                CURLOPT_ENCODING => "",             // handle all encodings
+                CURLOPT_ENCODING => '',             // handle all encodings
                 CURLOPT_AUTOREFERER => true,        // set referer on redirect
                 CURLOPT_CONNECTTIMEOUT => 120,      // timeout on connect
                 CURLOPT_TIMEOUT => 120,             // timeout on response
@@ -135,8 +134,9 @@ class ReCaptchaValidator extends Validator
             $header['errmsg'] = $errmsg;
             $response = $content;
 
-            if ($header['errno'] !== 0)
+            if ($header['errno'] !== 0) {
                 throw new Exception('Unable connection to the captcha server. ' . $header['errmsg']);
+            }
         }
 
         return Json::decode($response, true);

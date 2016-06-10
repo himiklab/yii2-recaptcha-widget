@@ -66,12 +66,12 @@ class ReCaptcha extends InputWidget
     /** @var string The size of the widget. [[SIZE_NORMAL]] (default) or [[SIZE_COMPACT]] */
     public $size;
 
-    /** @var int The tabindex of the widget  */
+    /** @var int The tabindex of the widget */
     public $tabindex;
 
     /** @var string Your JS callback function that's executed when the user submits a successful CAPTCHA response. */
     public $jsCallback;
-    
+
     /** @var string Your JS callback function that's executed when the recaptcha response expires and the user needs to solve a new CAPTCHA. */
     public $jsExpiredCallback;
 
@@ -161,7 +161,7 @@ class ReCaptcha extends InputWidget
             $jsCode = "var recaptchaCallback = function(response){jQuery('#{$inputId}').val(response); {$this->jsCallback}(response);};";
         }
         $this->jsCallback = 'recaptchaCallback';
-        
+
         if (empty($this->jsExpiredCallback)) {
             $jsExpCode = "var recaptchaExpiredCallback = function(){jQuery('#{$inputId}').val('');};";
         } else {
