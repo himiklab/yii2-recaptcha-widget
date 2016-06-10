@@ -1,0 +1,14 @@
+# phpstorm project files
+.idea
+
+# netbeans project files
+nbproject
+
+# phpunit itself is not needed
+phpunit.phar
+
+# composer itself is not needed
+composer.phar
+composer.lock
+
+/vendor
