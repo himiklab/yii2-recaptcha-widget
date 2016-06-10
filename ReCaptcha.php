@@ -85,10 +85,14 @@ class ReCaptcha extends InputWidget
             }
         }
 
-        $view = $this->view;
-        $view->registerJsFile(
+        
+        $this->view->registerJsFile(
             self::JS_API_URL . '?hl=' . $this->getLanguageSuffix(),
-            ['position' => $view::POS_HEAD]
+            [
+                'position' => yii\web\View::POS_HEAD,
+                'defer'=>'defer',
+                'async'=>'async'
+            ]
         );
 
         $this->customFieldPrepare();
