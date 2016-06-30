@@ -30,7 +30,7 @@ If a siteKey or secret is set in an individual view or validation rule that woul
 'components' => [
     'reCaptcha' => [
         'name' => 'reCaptcha',
-        'class' => 'himiklab\yii2\recaptcha\ReCaptcha',
+        'class' => 'snewer\yii2\recaptcha\ReCaptcha',
         'siteKey' => 'your siteKey',
         'secret' => 'your secret key',
     ],
@@ -46,7 +46,7 @@ public function rules()
 {
   return [
       // ...
-      [['reCaptcha'], \himiklab\yii2\recaptcha\ReCaptchaValidator::className(), 'secret' => 'your secret key']
+      [['reCaptcha'], \snewer\yii2\recaptcha\ReCaptchaValidator::className(), 'secret' => 'your secret key']
   ];
 }
 ```
@@ -58,7 +58,7 @@ public function rules()
 {
   return [
       // ...
-      [[], \himiklab\yii2\recaptcha\ReCaptchaValidator::className(), 'secret' => 'your secret key']
+      [[], \snewer\yii2\recaptcha\ReCaptchaValidator::className(), 'secret' => 'your secret key']
   ];
 }
 ```
@@ -70,7 +70,7 @@ public function rules()
 {
   return [
       // ...
-      [[], \himiklab\yii2\recaptcha\ReCaptchaValidator::className()]
+      [[], \snewer\yii2\recaptcha\ReCaptchaValidator::className()]
   ];
 }
 ```
@@ -81,7 +81,7 @@ For example:
 
 ```php
 <?= $form->field($model, 'reCaptcha')->widget(
-    \himiklab\yii2\recaptcha\ReCaptcha::className(),
+    \snewer\yii2\recaptcha\ReCaptcha::className(),
     ['siteKey' => 'your siteKey']
 ) ?>
 ```
@@ -89,7 +89,7 @@ For example:
 or
 
 ```php
-<?= \himiklab\yii2\recaptcha\ReCaptcha::widget([
+<?= \snewer\yii2\recaptcha\ReCaptcha::widget([
     'name' => 'reCaptcha',
     'siteKey' => 'your siteKey',
     'widgetOptions' => ['class' => 'col-sm-offset-3']
@@ -99,13 +99,13 @@ or
 or
 
 ```php
-<?= $form->field($model, 'reCaptcha')->widget(\himiklab\yii2\recaptcha\ReCaptcha::className()) ?>
+<?= $form->field($model, 'reCaptcha')->widget(\snewer\yii2\recaptcha\ReCaptcha::className()) ?>
 ```
 
 or simply
 
 ```php
-<?= \himiklab\yii2\recaptcha\ReCaptcha::widget(['name' => 'reCaptcha']) ?>
+<?= \snewer\yii2\recaptcha\ReCaptcha::widget(['name' => 'reCaptcha']) ?>
 ```
 
 Resources
