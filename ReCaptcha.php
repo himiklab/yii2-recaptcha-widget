@@ -156,16 +156,16 @@ class ReCaptcha extends InputWidget
         }
 
         if (empty($this->jsCallback)) {
-            $jsCode = "var recaptchaCallback = function(response){jQuery('#{$inputId}').val(response);};";
+            $jsCode = "var recaptchaCallback = function(response){jQuery('#{$inputId}').val(response).change();};";
         } else {
-            $jsCode = "var recaptchaCallback = function(response){jQuery('#{$inputId}').val(response); {$this->jsCallback}(response);};";
+            $jsCode = "var recaptchaCallback = function(response){jQuery('#{$inputId}').val(response).change(); {$this->jsCallback}(response);};";
         }
         $this->jsCallback = 'recaptchaCallback';
 
         if (empty($this->jsExpiredCallback)) {
-            $jsExpCode = "var recaptchaExpiredCallback = function(){jQuery('#{$inputId}').val('');};";
+            $jsExpCode = "var recaptchaExpiredCallback = function(){jQuery('#{$inputId}').val('').change();};";
         } else {
-            $jsExpCode = "var recaptchaExpiredCallback = function(){jQuery('#{$inputId}').val(''); {$this->jsExpiredCallback}(response);};";
+            $jsExpCode = "var recaptchaExpiredCallback = function(){jQuery('#{$inputId}').val('').change(); {$this->jsExpiredCallback}(response);};";
         }
         $this->jsExpiredCallback = 'recaptchaExpiredCallback';
 
