@@ -90,7 +90,7 @@ class ReCaptcha extends InputWidget
 
         $view = $this->view;
         $view->registerJsFile(
-            self::JS_API_URL . '?hl=' . $this->getLanguageSuffix(),
+            self::JS_API_URL . '?hl=' . $this->getLanguageSuffix() . '&rand=' . mt_rand(0,100),
             ['position' => $view::POS_HEAD, 'async' => true, 'defer' => true]
         );
 
