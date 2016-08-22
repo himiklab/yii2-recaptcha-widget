@@ -135,7 +135,7 @@ class ReCaptchaValidator extends Validator
             $response = $content;
 
             if ($header['errno'] !== 0) {
-                throw new Exception('Unable connection to the captcha server. ' . $header['errmsg']);
+                throw new Exception('Unable connection to the captcha server. Curl error #' . $header['errno'] . ' ' . $header['errmsg']);
             }
         }
 
