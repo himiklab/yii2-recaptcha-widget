@@ -42,7 +42,8 @@ class ReCaptchaValidator extends Validator
     {
         parent::init();
         if (empty($this->secret)) {
-            if (!empty(Yii::$app->reCaptcha->secret)) {
+            $variable = Yii::$app->reCaptcha->secret; //put result of magic methot in variable
+            if (!empty($variable)) { //check for empty
                 $this->secret = Yii::$app->reCaptcha->secret;
             } else {
                 throw new InvalidConfigException('Required `secret` param isn\'t set.');
