@@ -51,6 +51,9 @@ class ReCaptcha extends InputWidget
     const SIZE_NORMAL = 'normal';
     const SIZE_COMPACT = 'compact';
 
+    const LOCAL_SITEKEY = '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI';
+    const LOCAL_SECRET = '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe';
+
     /** @var string Your sitekey. */
     public $siteKey;
 
@@ -83,6 +86,8 @@ class ReCaptcha extends InputWidget
         if (empty($this->siteKey)) {
             if (!empty(Yii::$app->reCaptcha->siteKey)) {
                 $this->siteKey = Yii::$app->reCaptcha->siteKey;
+            } else if (YII_DEBUG) {
+                $this->siteKey = self::LOCAL_SITEKEY;
             } else {
                 throw new InvalidConfigException('Required `siteKey` param isn\'t set.');
             }
@@ -173,4 +178,15 @@ class ReCaptcha extends InputWidget
         $view->registerJs($jsExpCode, $view::POS_BEGIN);
         echo Html::input('hidden', $inputName, null, ['id' => $inputId]);
     }
+
+    public function getLocalSecret()
+    {
+        return self::LOCAL_SECRET;
+    }
+
+    public function getLocalSitekey()
+    {
+        return self::LOCAL_SITEKEY;
+    }
+
 }
