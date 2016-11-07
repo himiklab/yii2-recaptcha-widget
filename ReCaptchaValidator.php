@@ -42,7 +42,7 @@ class ReCaptchaValidator extends Validator
     {
         parent::init();
         if (empty($this->secret)) {
-            if (!empty(Yii::$app->reCaptcha->secret)) {
+            if (!empty(Yii::$app->get('reCaptcha')->secret)) {
                 $this->secret = Yii::$app->reCaptcha->secret;
             } else {
                 throw new InvalidConfigException('Required `secret` param isn\'t set.');
