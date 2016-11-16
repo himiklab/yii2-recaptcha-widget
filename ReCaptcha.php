@@ -81,8 +81,8 @@ class ReCaptcha extends InputWidget
     public function run()
     {
         if (empty($this->siteKey)) {
-            if (!empty(Yii::$app->reCaptcha->siteKey)) {
-                $this->siteKey = Yii::$app->reCaptcha->siteKey;
+            if (!empty(Yii::$app->get('reCaptcha')->siteKey)) {
+                $this->siteKey = Yii::$app->get('reCaptcha')->siteKey;
             } else {
                 throw new InvalidConfigException('Required `siteKey` param isn\'t set.');
             }
