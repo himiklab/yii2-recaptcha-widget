@@ -170,7 +170,7 @@ class ReCaptcha extends InputWidget
         if (empty($this->jsExpiredCallback)) {
             $jsExpCode = "var recaptchaExpiredCallback = function(){jQuery('#{$inputId}').val('');};";
         } else {
-            $jsExpCode = "var recaptchaExpiredCallback = function(){jQuery('#{$inputId}').val(''); {$this->jsExpiredCallback}(response);};";
+            $jsExpCode = "var recaptchaExpiredCallback = function(){jQuery('#{$inputId}').val(''); {$this->jsExpiredCallback}();};";
         }
         $this->jsExpiredCallback = 'recaptchaExpiredCallback';
 
