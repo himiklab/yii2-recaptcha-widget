@@ -72,7 +72,10 @@ class ReCaptcha extends InputWidget
     /** @var string Your JS callback function that's executed when the user submits a successful CAPTCHA response. */
     public $jsCallback;
 
-    /** @var string Your JS callback function that's executed when the recaptcha response expires and the user needs to solve a new CAPTCHA. */
+    /**
+     * @var string Your JS callback function that's executed when the recaptcha response expires and the user
+     * needs to solve a new CAPTCHA.
+     */
     public $jsExpiredCallback;
 
     /** @var array Additional html widget options, such as `class`. */
@@ -81,8 +84,10 @@ class ReCaptcha extends InputWidget
     public function run()
     {
         if (empty($this->siteKey)) {
-            if (!empty(Yii::$app->get('reCaptcha')->siteKey)) {
-                $this->siteKey = Yii::$app->get('reCaptcha')->siteKey;
+            /** @var ReCaptcha $reCaptcha */
+            $reCaptcha = Yii::$app->reCaptcha;
+            if (!empty($reCaptcha->siteKey)) {
+                $this->siteKey = $reCaptcha->siteKey;
             } else {
                 throw new InvalidConfigException('Required `siteKey` param isn\'t set.');
             }

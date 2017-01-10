@@ -33,17 +33,23 @@ class ReCaptchaValidator extends Validator
     /** @var string The shared key between your site and ReCAPTCHA. */
     public $secret;
 
-    /** @var int Choose your grabber for getting JSON, self::GRABBER_PHP = file_get_contents, self::GRABBER_CURL = CURL */
+    /**
+     * @var int Choose your grabber for getting JSON,
+     * self::GRABBER_PHP = file_get_contents, self::GRABBER_CURL = CURL
+     */
     public $grabberType = self::GRABBER_PHP;
 
+    /** @var string */
     public $uncheckedMessage;
 
     public function init()
     {
         parent::init();
         if (empty($this->secret)) {
-            if (!empty(Yii::$app->get('reCaptcha')->secret)) {
-                $this->secret = Yii::$app->reCaptcha->secret;
+            /** @var ReCaptcha $reCaptcha */
+            $reCaptcha = Yii::$app->reCaptcha;
+            if (!empty($reCaptcha->secret)) {
+                $this->secret = $reCaptcha->secret;
             } else {
                 throw new InvalidConfigException('Required `secret` param isn\'t set.');
             }
@@ -62,11 +68,12 @@ class ReCaptchaValidator extends Validator
      */
     public function clientValidateAttribute($model, $attribute, $view)
     {
-        $message = $this->uncheckedMessage ? $this->uncheckedMessage : Yii::t(
+        $message = $this->uncheckedMessage ?: Yii::t(
             'yii',
             '{attribute} cannot be blank.',
             ['attribute' => $model->getAttributeLabel($attribute)]
         );
+
         return "(function(messages){if(!grecaptcha.getResponse()){messages.push('{$message}');}})(messages);";
     }
 
@@ -74,6 +81,7 @@ class ReCaptchaValidator extends Validator
      * @param string $value
      * @return array|null
      * @throws Exception
+     * @throws \yii\base\InvalidParamException
      */
     protected function validateValue($value)
     {
@@ -99,6 +107,7 @@ class ReCaptchaValidator extends Validator
      * @param string $request
      * @return mixed
      * @throws Exception
+     * @throws \yii\base\InvalidParamException
      */
     protected function getResponse($request)
     {
@@ -125,17 +134,19 @@ class ReCaptchaValidator extends Validator
             $ch = curl_init($request);
             curl_setopt_array($ch, $options);
             $content = curl_exec($ch);
-            $err = curl_errno($ch);
+            $errno = curl_errno($ch);
             $errmsg = curl_error($ch);
             $header = curl_getinfo($ch);
             curl_close($ch);
 
-            $header['errno'] = $err;
+            $header['errno'] = $errno;
             $header['errmsg'] = $errmsg;
             $response = $content;
 
             if ($header['errno'] !== 0) {
-                throw new Exception('Unable connection to the captcha server. Curl error #' . $header['errno'] . ' ' . $header['errmsg']);
+                throw new Exception(
+                    'Unable connection to the captcha server. Curl error #' . $header['errno'] . ' ' . $header['errmsg']
+                );
             }
         }
 
