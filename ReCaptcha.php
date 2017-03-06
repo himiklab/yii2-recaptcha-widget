@@ -11,6 +11,7 @@ use Yii;
 use yii\base\InvalidConfigException;
 use yii\helpers\Html;
 use yii\widgets\InputWidget;
+use yii\helpers\Inflector;
 
 /**
  * Yii2 Google reCAPTCHA widget.
@@ -95,8 +96,8 @@ class ReCaptcha extends InputWidget
 
         $view = $this->view;
         $view->registerJsFile(
-            self::JS_API_URL . '?hl=' . $this->getLanguageSuffix(),
-            ['position' => $view::POS_HEAD, 'async' => true, 'defer' => true]
+            self::JS_API_URL . '?onload=recaptchaOnloadCallback&render=explicit&hl=' . $this->getLanguageSuffix(),
+            ['position' => $view::POS_END, 'async' => true, 'defer' => true]
         );
 
         $this->customFieldPrepare();
@@ -160,20 +161,24 @@ class ReCaptcha extends InputWidget
             $inputId = 'recaptcha-' . $this->name;
         }
 
+        $jsCallback = 'recaptchaCallback_' . Inflector::id2camel($inputId);
         if (empty($this->jsCallback)) {
-            $jsCode = "var recaptchaCallback = function(response){jQuery('#{$inputId}').val(response);};";
+            $jsCode = "var {$jsCallback} = function(response){jQuery('#{$inputId}').val(response);};";
         } else {
-            $jsCode = "var recaptchaCallback = function(response){jQuery('#{$inputId}').val(response); {$this->jsCallback}(response);};";
+            $jsCode = "var {$jsCallback} = function(response){jQuery('#{$inputId}').val(response); {$this->jsCallback}(response);};";
         }
-        $this->jsCallback = 'recaptchaCallback';
+        $this->jsCallback = $jsCallback;
 
+        $jsExpiredCallback = 'recaptchaExpiredCallback_' . Inflector::id2camel($inputId);
         if (empty($this->jsExpiredCallback)) {
-            $jsExpCode = "var recaptchaExpiredCallback = function(){jQuery('#{$inputId}').val('');};";
+            $jsExpCode = "var {$jsExpiredCallback} = function(){jQuery('#{$inputId}').val('');};";
         } else {
-            $jsExpCode = "var recaptchaExpiredCallback = function(){jQuery('#{$inputId}').val(''); {$this->jsExpiredCallback}();};";
+            $jsExpCode = "var {$jsExpiredCallback} = function(){jQuery('#{$inputId}').val(''); {$this->jsExpiredCallback}();};";
         }
-        $this->jsExpiredCallback = 'recaptchaExpiredCallback';
+        $this->jsExpiredCallback = $jsExpiredCallback;
 
+        $jsOnload = "var recaptchaOnloadCallback = function(){jQuery('.g-recaptcha').each(function(){grecaptcha.render(jQuery(this).get(0),{'sitekey':jQuery(this).data('sitekey'),'callback':window[jQuery(this).data('callback')]});});};";
+        $view->registerJs($jsOnload, $view::POS_BEGIN, 'recaptcha-onload');
         $view->registerJs($jsCode, $view::POS_BEGIN);
         $view->registerJs($jsExpCode, $view::POS_BEGIN);
         echo Html::input('hidden', $inputName, null, ['id' => $inputId]);
