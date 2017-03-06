@@ -68,11 +68,11 @@ class ReCaptchaValidator extends Validator
      */
     public function clientValidateAttribute($model, $attribute, $view)
     {
-        $message = $this->uncheckedMessage ?: Yii::t(
+        $message = addslashes($this->uncheckedMessage ?: Yii::t(
             'yii',
             '{attribute} cannot be blank.',
             ['attribute' => $model->getAttributeLabel($attribute)]
-        );
+        ));
 
         return "(function(messages){if(!grecaptcha.getResponse()){messages.push('{$message}');}})(messages);";
     }
