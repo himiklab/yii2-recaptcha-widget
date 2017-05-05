@@ -10,7 +10,6 @@ use yii\helpers\VarDumper;
 
 class ReCaptchaBehavior extends Behavior
 {
-
     //private $debug_as='firebug';
     private $debug_as = __METHOD__;
 
@@ -53,11 +52,15 @@ class ReCaptchaBehavior extends Behavior
      */
     public $skipOnEmpty = false;
 
+    /**
+     * @var string uncheckMessage for the validator.
+     */
+    public $uncheckedMessage = 'Please confirm that you are not a bot.';
+
     public function events()
     {
         return [
             ActiveRecord::EVENT_BEFORE_VALIDATE => 'reCaptchaBehaviorValidate',
-            //ActiveRecord::EVENT_AFTER_VALIDATE => 'reCaptchaBehaviorAfterValidate',
         ];
     }
 
@@ -87,7 +90,6 @@ class ReCaptchaBehavior extends Behavior
         return !in_array($scenario, $this->except, true) && (empty($this->on) || in_array($scenario, $this->on, true));
     }
 
-    //public function reCaptchaBehaviorAfterValidate($event)
     public function reCaptchaBehaviorValidate($event)
     {
         \Yii::trace("reCaptchaBehaviorAfterValidate ", $this->debug_as);
@@ -108,7 +110,7 @@ class ReCaptchaBehavior extends Behavior
         }
 
         $validator                   = new ReCaptchaValidator();
-        $validator->uncheckedMessage = 'Please confirm that you are not a bot.';
+        $validator->uncheckedMessage = $this->uncheckMessage;
 
         // only run validation if not already checked or if the attribute has an error
         $skip = $this->skipOnError && $this->owner->hasErrors($attribute)
