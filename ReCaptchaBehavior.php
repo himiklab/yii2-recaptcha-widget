@@ -53,7 +53,7 @@ class ReCaptchaBehavior extends Behavior
     public $skipOnEmpty = false;
 
     /**
-     * @var string uncheckMessage for the validator.
+     * @var string uncheckedMessage for the validator.
      */
     public $uncheckedMessage = 'Please confirm that you are not a bot.';
 
@@ -110,7 +110,7 @@ class ReCaptchaBehavior extends Behavior
         }
 
         $validator                   = new ReCaptchaValidator();
-        $validator->uncheckedMessage = $this->uncheckMessage;
+        $validator->uncheckedMessage = $this->uncheckedMessage;
 
         // only run validation if not already checked or if the attribute has an error
         $skip = $this->skipOnError && $this->owner->hasErrors($attribute)
