@@ -67,11 +67,17 @@ class ReCaptcha extends InputWidget
     /** @var string The size of the widget. [[SIZE_NORMAL]] (default) or [[SIZE_COMPACT]] */
     public $size;
 
-    /** @var int The tabindex of the widget  */
+    /** @var int The tabindex of the widget */
     public $tabindex;
 
     /** @var string Your JS callback function that's executed when the user submits a successful CAPTCHA response. */
     public $jsCallback;
+
+    /**
+     * @var string Your JS callback function that's executed when the recaptcha response expires and the user
+     * needs to solve a new CAPTCHA.
+     */
+    public $jsExpiredCallback;
 
     /** @var array Additional html widget options, such as `class`. */
     public $widgetOptions = [];
@@ -85,8 +91,10 @@ class ReCaptcha extends InputWidget
     public function run()
     {
         if (empty($this->siteKey)) {
-            if (!empty(Yii::$app->reCaptcha->siteKey)) {
-                $this->siteKey = Yii::$app->reCaptcha->siteKey;
+            /** @var ReCaptcha $reCaptcha */
+            $reCaptcha = Yii::$app->reCaptcha;
+            if (!empty($reCaptcha->siteKey)) {
+                $this->siteKey = $reCaptcha->siteKey;
             } else {
                 throw new InvalidConfigException('Required `siteKey` param isn\'t set.');
             }
@@ -101,7 +109,7 @@ class ReCaptcha extends InputWidget
         $view = $this->view;
         $view->registerJsFile(
             self::JS_API_URL . '?' . $arguments,
-            ['position' => $view::POS_END]
+            ['position' => $view::POS_END, 'async' => true, 'defer' => true]
         );
 
         $this->customFieldPrepare();
@@ -116,6 +124,9 @@ class ReCaptcha extends InputWidget
         ];
         if (!empty($this->jsCallback)) {
             $divOptions['data-callback'] = $this->jsCallback;
+        }
+        if (!empty($this->jsExpiredCallback)) {
+            $divOptions['data-expired-callback'] = $this->jsExpiredCallback;
         }
         if (!empty($this->theme)) {
             $divOptions['data-theme'] = $this->theme;
@@ -192,7 +203,15 @@ class ReCaptcha extends InputWidget
 
         $this->jsCallback = $verifyCallbackName;
 
+        if (empty($this->jsExpiredCallback)) {
+            $jsExpCode = "var recaptchaExpiredCallback = function(){jQuery('#{$inputId}').val('');};";
+        } else {
+            $jsExpCode = "var recaptchaExpiredCallback = function(){jQuery('#{$inputId}').val(''); {$this->jsExpiredCallback}();};";
+        }
+        $this->jsExpiredCallback = 'recaptchaExpiredCallback';
+
         $view->registerJs($jsCode, $view::POS_BEGIN);
+        $view->registerJs($jsExpCode, $view::POS_BEGIN);
 
         echo Html::input('hidden', $inputName, null, ['id' => $inputId]);
     }
