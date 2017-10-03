@@ -176,6 +176,7 @@ class ReCaptcha extends InputWidget
 
         $view->registerJs($jsCode, $view::POS_BEGIN);
         $view->registerJs($jsExpCode, $view::POS_BEGIN);
-        echo Html::input('hidden', $inputName, null, ['id' => $inputId]);
+        $this->options['id'] = $inputId;
+        echo Html::input('hidden', $inputName, null, $this->options);
     }
 }
