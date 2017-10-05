@@ -5,7 +5,7 @@
  * @license http://opensource.org/licenses/MIT MIT
  */
 
-namespace himiklab\yii2\recaptcha;
+namespace ferrumfist\yii2\recaptcha;
 
 use Yii;
 use yii\base\InvalidConfigException;
@@ -176,6 +176,7 @@ class ReCaptcha extends InputWidget
 
         $view->registerJs($jsCode, $view::POS_BEGIN);
         $view->registerJs($jsExpCode, $view::POS_BEGIN);
-        echo Html::input('hidden', $inputName, null, ['id' => $inputId]);
+        $this->options['id'] = $inputId;
+        echo Html::input('hidden', $inputName, null, $this->options);
     }
 }
