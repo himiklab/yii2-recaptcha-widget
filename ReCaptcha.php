@@ -5,7 +5,7 @@
  * @license http://opensource.org/licenses/MIT MIT
  */
 
-namespace himiklab\yii2\recaptcha;
+namespace ferrumfist\yii2\recaptcha;
 
 use Yii;
 use yii\base\InvalidConfigException;
