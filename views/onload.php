@@ -6,7 +6,7 @@ $this->registerJs(<<<'JS'
 var recaptchaOnloadCallback = function() {
     jQuery(".g-recaptcha").each(function(index) {
         var reCaptcha = jQuery(this);
-        grecaptcha.render(reCaptcha.attr("id"), {
+        var recaptchaClientId = grecaptcha.render(reCaptcha.attr("id"), {
             'sitekey': reCaptcha.attr("data-sitekey"),
             'callback': eval(reCaptcha.attr("data-callback")),
             'theme': reCaptcha.attr("data-theme"),
@@ -14,6 +14,7 @@ var recaptchaOnloadCallback = function() {
             'size': reCaptcha.attr("data-size"),
             'tabindex': reCaptcha.attr("data-tabindex")
         });
+        reCaptcha.data('recaptcha-client-id', recaptchaClientId);
     });
 };
 JS

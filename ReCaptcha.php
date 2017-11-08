@@ -148,7 +148,7 @@ class ReCaptcha extends InputWidget
         }
 
         // The id attribute required for explicit reCaptcha initialization
-        $divOptions['id'] = $this->getReCaptchaId();
+        $divOptions['id'] = $this->getReCaptchaId() . '-recaptcha';
 
         $divOptions += $this->widgetOptions;
 
@@ -161,7 +161,11 @@ class ReCaptcha extends InputWidget
             return $this->widgetOptions['id'];
         }
 
-        return $this->id . '-recaptcha';
+        if ($this->hasModel()) {
+            return Html::getInputId($this->model, $this->attribute);
+        }
+
+        return $this->id . '-' . $this->name;
     }
 
     protected function getLanguageSuffix()
@@ -189,12 +193,7 @@ class ReCaptcha extends InputWidget
             $inputName = $this->name;
         }
 
-        if (isset($this->widgetOptions['id'])) {
-            $inputId = $this->getReCaptchaId() . '-input';
-        } else {
-            $inputId = Html::getInputId($this->model, $this->attribute);
-        }
-
+        $inputId = $this->getReCaptchaId();
         $verifyCallbackName = lcfirst(Inflector::id2camel($inputId)) . 'Callback';
         $jsCode = $this->render('verify', [
             'verifyCallbackName' => $verifyCallbackName,
