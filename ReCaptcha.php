@@ -82,13 +82,7 @@ class ReCaptcha extends InputWidget
     /** @var array Additional html widget options, such as `class`. */
     public $widgetOptions = [];
 
-    public function init()
-    {
-        parent::init();
-
-        $view = $this->view;
-        $view->registerJs($this->render('onload'), $view::POS_BEGIN);
-    }
+    protected static $firstWidget = true;
 
     public function run()
     {
@@ -102,17 +96,22 @@ class ReCaptcha extends InputWidget
             }
         }
 
-        $arguments = http_build_query([
-            'hl' => $this->getLanguageSuffix(),
-            'render' => 'explicit',
-            'onload' => 'recaptchaOnloadCallback',
-        ]);
+        if (self::$firstWidget) {
+            $view = $this->view;
+            $arguments = http_build_query([
+                'hl' => $this->getLanguageSuffix(),
+                'render' => 'explicit',
+                'onload' => 'recaptchaOnloadCallback',
+            ]);
+            $view->registerJsFile(
+                self::JS_API_URL . '?' . $arguments,
+                ['position' => $view::POS_END, 'async' => true, 'defer' => true]
+            );
 
-        $view = $this->view;
-        $view->registerJsFile(
-            self::JS_API_URL . '?' . $arguments,
-            ['position' => $view::POS_END, 'async' => true, 'defer' => true]
-        );
+            $view->registerJs($this->render('onload'), $view::POS_BEGIN);
+
+            self::$firstWidget = false;
+        }
 
         $this->customFieldPrepare();
         echo Html::tag('div', '', $this->buildDivOptions());
