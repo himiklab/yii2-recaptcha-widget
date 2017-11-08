@@ -84,6 +84,8 @@ class ReCaptcha extends InputWidget
 
     public function init()
     {
+        parent::init();
+
         $view = $this->view;
         $view->registerJs($this->render('onload'), $view::POS_BEGIN);
     }
@@ -159,11 +161,7 @@ class ReCaptcha extends InputWidget
             return $this->widgetOptions['id'];
         }
 
-        if ($this->hasModel()) {
-            return $this->model->formName() . '-recaptcha';
-        }
-
-        return $this->name . '-recaptcha';
+        return $this->id . '-recaptcha';
     }
 
     protected function getLanguageSuffix()
@@ -191,16 +189,18 @@ class ReCaptcha extends InputWidget
             $inputName = $this->name;
         }
 
-        $inputId = $this->getReCaptchaId() . '-input';
+        if (isset($this->widgetOptions['id'])) {
+            $inputId = $this->getReCaptchaId() . '-input';
+        } else {
+            $inputId = Html::getInputId($this->model, $this->attribute);
+        }
 
         $verifyCallbackName = lcfirst(Inflector::id2camel($inputId)) . 'Callback';
-
         $jsCode = $this->render('verify', [
             'verifyCallbackName' => $verifyCallbackName,
             'jsCallback' => $this->jsCallback,
             'inputId' => $inputId,
         ]);
-
         $this->jsCallback = $verifyCallbackName;
 
         if (empty($this->jsExpiredCallback)) {
