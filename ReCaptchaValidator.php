@@ -43,6 +43,9 @@ class ReCaptchaValidator extends Validator
     /** @var string */
     public $uncheckedMessage;
 
+    /** @var boolean */
+    protected $isValid = false;
+
     public function init()
     {
         parent::init();
@@ -94,17 +97,21 @@ class ReCaptchaValidator extends Validator
             }
         }
 
-        $request = self::SITE_VERIFY_URL . '?' . http_build_query([
-                'secret' => $this->secret,
-                'response' => $value,
-                'remoteip' => Yii::$app->request->userIP
-            ]);
-        $response = $this->getResponse($request);
-        if (!isset($response['success'])) {
-            throw new Exception('Invalid recaptcha verify response.');
+        if (!$this->isValid) {
+            $request = self::SITE_VERIFY_URL . '?' . http_build_query([
+                    'secret' => $this->secret,
+                    'response' => $value,
+                    'remoteip' => Yii::$app->request->userIP
+                ]);
+            $response = $this->getResponse($request);
+            if (!isset($response['success'])) {
+                throw new Exception('Invalid recaptcha verify response.');
+            }
+
+            $this->isValid = (boolean)$response['success'];
         }
 
-        return $response['success'] ? null : [$this->message, []];
+        return $this->isValid ? null : [$this->message, []];
     }
 
     /**
