@@ -75,6 +75,29 @@ public function rules()
 }
 ```
 
+To validate by behavior e.g. to validate only "once" because validate() is also called several times in controller or external traits
+Add the behavior to your model
+```php
+
+public $reCaptcha;
+
+public function behaviors()
+{
+    return array_merge(parent::behaviors(), [
+      ...
+        'reCaptcha' => [
+            'class' => ReCaptchaBehavior::className(),
+            'attribute' => 'reCaptcha',
+            'on' => ['default'],  // array of scenarios where the validation should run (optional)
+            'except' => [], // array of scenarios where the validation should not run (optional)
+            'guestsOnly' => false,  // valdation only for guests? if false also users will be checked
+            'uncheckedMessage' => 'Please confirm that you are not a bot.'
+        ],
+      ...
+    ]);
+}
+
+
 Usage
 -----
 For example:
