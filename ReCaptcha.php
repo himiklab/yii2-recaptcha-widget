@@ -1,7 +1,7 @@
 <?php
 /**
  * @link https://github.com/himiklab/yii2-recaptcha-widget
- * @copyright Copyright (c) 2014 HimikLab
+ * @copyright Copyright (c) 2014-2017 HimikLab
  * @license http://opensource.org/licenses/MIT MIT
  */
 
@@ -148,7 +148,7 @@ class ReCaptcha extends InputWidget
         // The id attribute required for explicit reCaptcha initialization
         $divOptions['id'] = $this->getReCaptchaId();
 
-        $divOptions = $divOptions + $this->widgetOptions;
+        $divOptions += $this->widgetOptions;
 
         return $divOptions;
     }
@@ -161,9 +161,9 @@ class ReCaptcha extends InputWidget
 
         if ($this->hasModel()) {
             return $this->model->formName() . '-recaptcha';
-        } else {
-            return $this->name . '-recaptcha';
         }
+
+        return $this->name . '-recaptcha';
     }
 
     protected function getLanguageSuffix()
@@ -177,9 +177,9 @@ class ReCaptcha extends InputWidget
 
         if (in_array($currentAppLanguage, $langsExceptions)) {
             return $currentAppLanguage;
-        } else {
-            return substr($currentAppLanguage, 0, strpos($currentAppLanguage, '-'));
         }
+
+        return substr($currentAppLanguage, 0, strpos($currentAppLanguage, '-'));
     }
 
     protected function customFieldPrepare()
@@ -206,7 +206,8 @@ class ReCaptcha extends InputWidget
         if (empty($this->jsExpiredCallback)) {
             $jsExpCode = "var recaptchaExpiredCallback = function(){jQuery('#{$inputId}').val('');};";
         } else {
-            $jsExpCode = "var recaptchaExpiredCallback = function(){jQuery('#{$inputId}').val(''); {$this->jsExpiredCallback}();};";
+            $jsExpCode = "var recaptchaExpiredCallback = function(){jQuery('#{$inputId}').val(''); " .
+                "{$this->jsExpiredCallback}();};";
         }
         $this->jsExpiredCallback = 'recaptchaExpiredCallback';
 

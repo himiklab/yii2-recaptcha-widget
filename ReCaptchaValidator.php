@@ -1,7 +1,7 @@
 <?php
 /**
  * @link https://github.com/himiklab/yii2-recaptcha-widget
- * @copyright Copyright (c) 2014 HimikLab
+ * @copyright Copyright (c) 2014-2017 HimikLab
  * @license http://opensource.org/licenses/MIT MIT
  */
 
@@ -78,7 +78,7 @@ class ReCaptchaValidator extends Validator
     }
 
     /**
-     * @param string $value
+     * @param string|array $value
      * @return array|null
      * @throws Exception
      * @throws \yii\base\InvalidParamException
@@ -100,6 +100,7 @@ class ReCaptchaValidator extends Validator
         if (!isset($response['success'])) {
             throw new Exception('Invalid recaptcha verify response.');
         }
+
         return $response['success'] ? null : [$this->message, []];
     }
 
