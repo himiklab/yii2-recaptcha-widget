@@ -91,6 +91,12 @@ For example:
 or
 
 ```php
+<?= $form->field($model, 'reCaptcha')->widget(\himiklab\yii2\recaptcha\ReCaptcha::className()) ?>
+```
+
+or
+
+```php
 <?= \himiklab\yii2\recaptcha\ReCaptcha::widget([
     'name' => 'reCaptcha',
     'siteKey' => 'your siteKey',
@@ -98,21 +104,11 @@ or
 ]) ?>
 ```
 
-or
-
-```php
-<?= $form->field($model, 'reCaptcha')->widget(\himiklab\yii2\recaptcha\ReCaptcha::className()) ?>
-```
-
 or simply
 
 ```php
 <?= \himiklab\yii2\recaptcha\ReCaptcha::widget(['name' => 'reCaptcha']) ?>
 ```
-
-Notes
------
-Exclude a reCaptcha field from ajax validation. It creates problem.
 
 Resources
 ---------
