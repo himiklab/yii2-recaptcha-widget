@@ -1,7 +1,7 @@
 <?php
 /**
  * @link https://github.com/himiklab/yii2-recaptcha-widget
- * @copyright Copyright (c) 2014-2017 HimikLab
+ * @copyright Copyright (c) 2014-2018 HimikLab
  * @license http://opensource.org/licenses/MIT MIT
  */
 
@@ -77,11 +77,11 @@ class ReCaptchaValidator extends Validator
             '{attribute} cannot be blank.',
             ['attribute' => $model->getAttributeLabel($attribute)]
         ));
-        $recaptchaId = Html::getInputId($model, $attribute) . '-recaptcha';
+        $recaptchaInputId = Html::getInputId($model, $attribute);
 
         return <<<JS
 (function(messages) {
-    if(!grecaptcha.getResponse(jQuery("#{$recaptchaId}").data("recaptcha-client-id"))) {
+    if(!jQuery("#{$recaptchaInputId}").val()) {
         messages.push("{$message}");
     }
 })(messages);
@@ -133,16 +133,16 @@ JS;
             }
         } else {
             $options = array(
-                CURLOPT_CUSTOMREQUEST => 'GET',     //set request type post or get
-                CURLOPT_POST => false,              //set to GET
-                CURLOPT_RETURNTRANSFER => true,     // return web page
-                CURLOPT_HEADER => false,            // don't return headers
-                CURLOPT_FOLLOWLOCATION => true,     // follow redirects
-                CURLOPT_ENCODING => '',             // handle all encodings
-                CURLOPT_AUTOREFERER => true,        // set referer on redirect
-                CURLOPT_CONNECTTIMEOUT => 120,      // timeout on connect
-                CURLOPT_TIMEOUT => 120,             // timeout on response
-                CURLOPT_MAXREDIRS => 10,            // stop after 10 redirects
+                CURLOPT_CUSTOMREQUEST => 'GET',
+                CURLOPT_POST => false,
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_HEADER => false,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_ENCODING => '',
+                CURLOPT_AUTOREFERER => true,
+                CURLOPT_CONNECTTIMEOUT => 120,
+                CURLOPT_TIMEOUT => 120,
+                CURLOPT_MAXREDIRS => 10,
             );
 
             $curlResource = curl_init($request);

@@ -1,7 +1,7 @@
 <?php
 /**
  * @link https://github.com/himiklab/yii2-recaptcha-widget
- * @copyright Copyright (c) 2014-2017 HimikLab
+ * @copyright Copyright (c) 2014-2018 HimikLab
  * @license http://opensource.org/licenses/MIT MIT
  */
 
@@ -10,7 +10,6 @@ namespace himiklab\yii2\recaptcha;
 use Yii;
 use yii\base\InvalidConfigException;
 use yii\helpers\Html;
-use yii\helpers\Inflector;
 use yii\widgets\InputWidget;
 
 /**
@@ -79,6 +78,12 @@ class ReCaptcha extends InputWidget
      */
     public $jsExpiredCallback;
 
+    /** @var string Your JS callback function that's executed when reCAPTCHA encounters an error (usually network
+     * connectivity) and cannot continue until connectivity is restored. If you specify a function here, you are
+     * responsible for informing the user that they should retry.
+     */
+    public $jsErrorCallback;
+
     /** @var array Additional html widget options, such as `class`. */
     public $widgetOptions = [];
 
@@ -110,15 +115,21 @@ class ReCaptcha extends InputWidget
             $view->registerJs(
                 <<<'JS'
 var recaptchaOnloadCallback = function() {
-    jQuery(".g-recaptcha").each(function(index) {
+    jQuery(".g-recaptcha").each(function() {
         var reCaptcha = jQuery(this);
         var recaptchaClientId = grecaptcha.render(reCaptcha.attr("id"), {
-            "sitekey": reCaptcha.attr("data-sitekey"),
-            "callback": eval(reCaptcha.attr("data-callback")),
-            "theme": reCaptcha.attr("data-theme"),
-            "type": reCaptcha.attr("data-type"),
-            "size": reCaptcha.attr("data-size"),
-            "tabindex": reCaptcha.attr("data-tabindex")
+            "callback": function(response) {
+                jQuery("#" + reCaptcha.attr("input-id")).val(response).trigger("change");
+                if (reCaptcha.attr("data-callback")) {
+                    eval("(" + reCaptcha.attr("data-callback") + ")(response)");
+                }
+            },
+            "expired-callback": function() {
+                jQuery("#" + reCaptcha.attr("input-id")).val("");
+                if (reCaptcha.attr("data-expired-callback")) {
+                     eval("(" + reCaptcha.attr("data-expired-callback") + ")()");
+                }
+            },
         });
         reCaptcha.data("recaptcha-client-id", recaptchaClientId);
     });
@@ -164,52 +175,14 @@ JS
 
     protected function customFieldPrepare()
     {
-        $view = $this->view;
         $inputId = $this->getReCaptchaId();
-
-        $verifyCallbackName = 'recVerCall' . Inflector::id2camel($inputId);
-        if (empty($this->jsCallback)) {
-            $jsVerifyCallbackCode = <<<JS
-var {$verifyCallbackName} = function(response) {
-    jQuery("#{$inputId}").val(response);
-    jQuery("#{$inputId}").trigger("change");
-}
-JS;
-        } else {
-            $jsVerifyCallbackCode = <<<JS
-var {$verifyCallbackName} = function(response) {
-    jQuery("#{$inputId}").val(response);
-    jQuery("#{$inputId}").trigger("change");
-    {$this->jsCallback}(response);
-}
-JS;
-        }
-        $view->registerJs($jsVerifyCallbackCode, $view::POS_END);
-        $this->jsCallback = $verifyCallbackName;
-
-        $expiredCallbackName = 'recExpCall' . Inflector::id2camel($inputId);
-        if (empty($this->jsExpiredCallback)) {
-            $jsExpiredCallbackCode = <<<JS
-var {$expiredCallbackName} = function(){
-    jQuery("#{$inputId}").val("");
-};
-JS;
-        } else {
-            $jsExpiredCallbackCode = <<<JS
-var {$expiredCallbackName} = function(){
-    jQuery("#{$inputId}").val("");
-    {$this->jsExpiredCallback}();
-};
-JS;
-        }
-        $view->registerJs($jsExpiredCallbackCode, $view::POS_END);
-        $this->jsExpiredCallback = $expiredCallbackName;
 
         if ($this->hasModel()) {
             $inputName = Html::getInputName($this->model, $this->attribute);
         } else {
             $inputName = $this->name;
         }
+
         echo Html::input('hidden', $inputName, null, ['id' => $inputId]);
     }
 
@@ -219,11 +192,16 @@ JS;
             'class' => 'g-recaptcha',
             'data-sitekey' => $this->siteKey
         ];
+        $divOptions += $this->widgetOptions;
+
         if (!empty($this->jsCallback)) {
             $divOptions['data-callback'] = $this->jsCallback;
         }
         if (!empty($this->jsExpiredCallback)) {
             $divOptions['data-expired-callback'] = $this->jsExpiredCallback;
+        }
+        if (!empty($this->jsErrorCallback)) {
+            $divOptions['data-error-callback'] = $this->jsErrorCallback;
         }
         if (!empty($this->theme)) {
             $divOptions['data-theme'] = $this->theme;
@@ -241,9 +219,8 @@ JS;
         if (isset($this->widgetOptions['class'])) {
             $divOptions['class'] = "{$divOptions['class']} {$this->widgetOptions['class']}";
         }
-
+        $divOptions['input-id'] = $this->getReCaptchaId();
         $divOptions['id'] = $this->getReCaptchaId() . '-recaptcha';
-        $divOptions += $this->widgetOptions;
 
         return $divOptions;
     }
