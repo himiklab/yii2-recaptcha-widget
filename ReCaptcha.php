@@ -118,7 +118,7 @@ class ReCaptcha extends InputWidget
 var recaptchaOnloadCallback = function() {
     jQuery(".g-recaptcha").each(function() {
         var reCaptcha = jQuery(this);
-        if (reCaptcha.data("recaptcha-client-id") == undefined) {
+        if (reCaptcha.data("recaptcha-client-id") === undefined) {
             var recaptchaClientId = grecaptcha.render(reCaptcha.attr("id"), {
                 "callback": function(response) {
                     jQuery("#" + reCaptcha.attr("input-id")).val(response).trigger("change");
@@ -133,7 +133,7 @@ var recaptchaOnloadCallback = function() {
                     }
                 },
             });
-            reCaptcha.data("recaptcha-client-id", recaptchaClientId);   
+            reCaptcha.data("recaptcha-client-id", recaptchaClientId);
         }
     });
 };
@@ -144,7 +144,7 @@ JS
         }
 
         if (Yii::$app->request->isAjax) {
-            $view->registerJs('recaptchaOnloadCallback();', $view::POS_END);
+            $view->registerJs('jQuery.getScript("' . self::JS_API_URL . '")', $view::POS_END);
         }
 
         $this->customFieldPrepare();
