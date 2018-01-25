@@ -141,9 +141,7 @@ JS
         if (Yii::$app->request->isAjax) {
             $jsUrl = self::JS_API_URL;
             $view->registerJs(<<<JS
-if (typeof grecaptcha === "undefined") {
-    jQuery.getScript("{$jsUrl}", function() {recaptchaOnloadCallback()});
-} else {
+if (typeof grecaptcha !== "undefined") {
     recaptchaOnloadCallback();
 }
 JS
