@@ -87,8 +87,6 @@ class ReCaptcha extends InputWidget
     /** @var array Additional html widget options, such as `class`. */
     public $widgetOptions = [];
 
-    protected static $firstWidget = true;
-
     public function run()
     {
         $view = $this->view;
@@ -102,19 +100,19 @@ class ReCaptcha extends InputWidget
             }
         }
 
-        if (self::$firstWidget) {
-            $arguments = http_build_query([
-                'hl' => $this->getLanguageSuffix(),
-                'render' => 'explicit',
-                'onload' => 'recaptchaOnloadCallback',
-            ]);
+        $arguments = http_build_query([
+            'hl' => $this->getLanguageSuffix(),
+            'render' => 'explicit',
+            'onload' => 'recaptchaOnloadCallback',
+        ]);
 
-            $view->registerJsFile(
-                self::JS_API_URL . '?' . $arguments,
-                ['position' => $view::POS_END, 'async' => true, 'defer' => true]
-            );
-            $view->registerJs(
-                <<<'JS'
+        $view->registerJsFile(
+            self::JS_API_URL . '?' . $arguments,
+            ['position' => $view::POS_END, 'async' => true, 'defer' => true],
+            'recaptcha-api'
+        );
+        $view->registerJs(
+            <<<'JS'
 var recaptchaOnloadCallback = function() {
     jQuery(".g-recaptcha").each(function() {
         var reCaptcha = jQuery(this);
@@ -138,13 +136,19 @@ var recaptchaOnloadCallback = function() {
     });
 };
 JS
-                , $view::POS_END);
-
-            self::$firstWidget = false;
-        }
+            , $view::POS_END, 'recaptcha-onload');
 
         if (Yii::$app->request->isAjax) {
-            $view->registerJs('jQuery.getScript("' . self::JS_API_URL . '")', $view::POS_END);
+            $jsUrl = self::JS_API_URL;
+            $view->registerJs(<<<JS
+if (typeof grecaptcha === "undefined") {
+    jQuery.getScript("{$jsUrl}", function() {recaptchaOnloadCallback()});
+} else {
+    recaptchaOnloadCallback();
+}
+JS
+                , $view::POS_END
+            );
         }
 
         $this->customFieldPrepare();
