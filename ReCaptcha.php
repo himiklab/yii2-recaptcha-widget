@@ -116,7 +116,7 @@ class ReCaptcha extends InputWidget
 var recaptchaOnloadCallback = function() {
     jQuery(".g-recaptcha").each(function() {
         var reCaptcha = jQuery(this);
-        if (reCaptcha.data("recaptcha-client-id") === undefined && typeof grecaptcha !== "undefined") {
+        if (reCaptcha.data("recaptcha-client-id") === undefined) {
             var recaptchaClientId = grecaptcha.render(reCaptcha.attr("id"), {
                 "callback": function(response) {
                     jQuery("#" + reCaptcha.attr("input-id")).val(response).trigger("change");
