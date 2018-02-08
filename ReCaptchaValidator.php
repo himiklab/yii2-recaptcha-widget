@@ -10,7 +10,6 @@ namespace himiklab\yii2\recaptcha;
 use Yii;
 use yii\base\Exception;
 use yii\base\InvalidConfigException;
-use yii\helpers\Html;
 use yii\helpers\Json;
 use yii\validators\Validator;
 
@@ -77,14 +76,11 @@ class ReCaptchaValidator extends Validator
             '{attribute} cannot be blank.',
             ['attribute' => $model->getAttributeLabel($attribute)]
         ));
-        $recaptchaInputId = Html::getInputId($model, $attribute);
 
         return <<<JS
-(function(messages) {
-    if(!jQuery("#{$recaptchaInputId}").val()) {
-        messages.push("{$message}");
-    }
-})(messages);
+if (!value) {
+     messages.push("{$message}");
+}
 JS;
     }
 
