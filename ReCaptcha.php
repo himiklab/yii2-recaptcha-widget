@@ -119,13 +119,23 @@ var recaptchaOnloadCallback = function() {
         if (reCaptcha.data("recaptcha-client-id") === undefined) {
             var recaptchaClientId = grecaptcha.render(reCaptcha.attr("id"), {
                 "callback": function(response) {
-                    jQuery("#" + reCaptcha.attr("input-id")).val(response).trigger("change");
+                    if (reCaptcha.attr("form-id") !== "") {
+                        jQuery("#" + reCaptcha.attr("input-id"), "#" + reCaptcha.attr("form-id")).val(response).trigger("change");
+                    } else {
+                        jQuery("#" + reCaptcha.attr("input-id")).val(response).trigger("change");
+                    }
+
                     if (reCaptcha.attr("data-callback")) {
                         eval("(" + reCaptcha.attr("data-callback") + ")(response)");
                     }
                 },
                 "expired-callback": function() {
-                    jQuery("#" + reCaptcha.attr("input-id")).val("");
+                    if (reCaptcha.attr("form-id") !== "") {
+                        jQuery("#" + reCaptcha.attr("input-id"), "#" + reCaptcha.attr("form-id")).val("");
+                    } else {
+                        jQuery("#" + reCaptcha.attr("input-id")).val("");
+                    }
+
                     if (reCaptcha.attr("data-expired-callback")) {
                          eval("(" + reCaptcha.attr("data-expired-callback") + ")()");
                     }
@@ -228,7 +238,9 @@ JS
             $divOptions['class'] = "{$divOptions['class']} {$this->widgetOptions['class']}";
         }
         $divOptions['input-id'] = $this->getReCaptchaId();
-        $divOptions['id'] = $this->getReCaptchaId() . '-recaptcha';
+        $divOptions['form-id'] = isset($this->field->form->id) ? $this->field->form->id : '';
+        $divOptions['id'] = $this->getReCaptchaId() . '-recaptcha' .
+            ($divOptions['form-id'] ? ('-' . $divOptions['form-id']) : '');
 
         return $divOptions;
     }
