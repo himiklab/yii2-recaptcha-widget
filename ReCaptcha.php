@@ -5,7 +5,7 @@
  * @license http://opensource.org/licenses/MIT MIT
  */
 
-namespace himiklab\yii2\recaptcha;
+namespace mohsen1369\yii2\recaptcha;
 
 use Yii;
 use yii\base\InvalidConfigException;
@@ -50,6 +50,7 @@ class ReCaptcha extends InputWidget
 
     const SIZE_NORMAL = 'normal';
     const SIZE_COMPACT = 'compact';
+    const SIZE_INVISIBLE = 'invisible';
 
     /** @var string Your sitekey. */
     public $siteKey;
@@ -63,7 +64,7 @@ class ReCaptcha extends InputWidget
     /** @var string The type of CAPTCHA to serve. [[TYPE_IMAGE]] (default) or [[TYPE_AUDIO]] */
     public $type;
 
-    /** @var string The size of the widget. [[SIZE_NORMAL]] (default) or [[SIZE_COMPACT]] */
+    /** @var string The size of the widget. [[SIZE_NORMAL]] (default) or [[SIZE_COMPACT]] or [[SIZE_INVISIBLE]] */
     public $size;
 
     /** @var integer The tabindex of the widget */
@@ -142,6 +143,10 @@ var recaptchaOnloadCallback = function() {
                 },
             });
             reCaptcha.data("recaptcha-client-id", recaptchaClientId);
+            
+            if (reCaptcha.data("size") === "invisible") {
+                grecaptcha.execute(recaptchaClientId);
+            }
         }
     });
 };
