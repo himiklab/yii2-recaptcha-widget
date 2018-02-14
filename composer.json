@@ -1,5 +1,5 @@
 {
-    "name": "mohsen1369/yii2-recaptcha-widget",
+    "name": "himiklab/yii2-recaptcha-widget",
     "description": "Yii2 Google reCAPTCHA widget",
     "keywords": ["yii2", "captcha", "recaptcha", "google", "widget"],
     "type": "yii2-extension",
