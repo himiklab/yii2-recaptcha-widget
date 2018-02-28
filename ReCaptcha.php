@@ -243,7 +243,7 @@ JS
             $divOptions['class'] = "{$divOptions['class']} {$this->widgetOptions['class']}";
         }
         $divOptions['input-id'] = $this->getReCaptchaId();
-        $divOptions['form-id'] = isset($this->field->form->id) ? $this->field->form->id : '';
+        $divOptions['form-id'] = (isset($this->field) && $this->field->form !== null) ? $this->field->form->id : '';
         $divOptions['id'] = $this->getReCaptchaId() . '-recaptcha' .
             ($divOptions['form-id'] ? ('-' . $divOptions['form-id']) : '');
 
