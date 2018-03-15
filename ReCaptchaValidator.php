@@ -10,7 +10,7 @@ namespace himiklab\yii2\recaptcha;
 use Yii;
 use yii\base\Exception;
 use yii\base\InvalidConfigException;
-use yii\helpers\Json;
+use yii\httpclient\Client;
 use yii\validators\Validator;
 
 /**
@@ -21,9 +21,6 @@ use yii\validators\Validator;
  */
 class ReCaptchaValidator extends Validator
 {
-    const GRABBER_PHP = 1; // file_get_contents
-    const GRABBER_CURL = 2; // CURL, because sometimes file_get_contents is deprecated
-
     const SITE_VERIFY_URL = 'https://www.google.com/recaptcha/api/siteverify';
 
     /** @var boolean Whether to skip this validator if the input is empty. */
@@ -31,12 +28,6 @@ class ReCaptchaValidator extends Validator
 
     /** @var string The shared key between your site and ReCAPTCHA. */
     public $secret;
-
-    /**
-     * @var int Choose your grabber for getting JSON,
-     * self::GRABBER_PHP = file_get_contents, self::GRABBER_CURL = CURL
-     */
-    public $grabberType = self::GRABBER_PHP;
 
     /** @var string */
     public $uncheckedMessage;
@@ -94,12 +85,7 @@ JS;
     {
         if (!$this->isValid) {
             if (!empty($value)) {
-                $request = self::SITE_VERIFY_URL . '?' . http_build_query([
-                        'secret' => $this->secret,
-                        'response' => $value,
-                        'remoteip' => Yii::$app->request->userIP
-                    ]);
-                $response = $this->getResponse($request);
+                $response = $this->getResponse($value);
                 if (!isset($response['success'])) {
                     throw new Exception('Invalid recaptcha verify response.');
                 }
@@ -114,47 +100,24 @@ JS;
     }
 
     /**
-     * @param string $request
-     * @return mixed
+     * @param string $value
+     * @return array
      * @throws Exception
      * @throws \yii\base\InvalidParamException
      */
-    protected function getResponse($request)
+    protected function getResponse($value)
     {
-        if ($this->grabberType === self::GRABBER_PHP) {
-            $response = @file_get_contents($request);
-
-            if ($response === false) {
-                throw new Exception('Unable connection to the captcha server.');
-            }
-        } else {
-            $options = array(
-                CURLOPT_CUSTOMREQUEST => 'GET',
-                CURLOPT_POST => false,
-                CURLOPT_RETURNTRANSFER => true,
-                CURLOPT_HEADER => false,
-                CURLOPT_FOLLOWLOCATION => true,
-                CURLOPT_ENCODING => '',
-                CURLOPT_AUTOREFERER => true,
-                CURLOPT_CONNECTTIMEOUT => 120,
-                CURLOPT_TIMEOUT => 120,
-                CURLOPT_MAXREDIRS => 10,
-            );
-
-            $curlResource = curl_init($request);
-            curl_setopt_array($curlResource, $options);
-            $response = curl_exec($curlResource);
-            $errno = curl_errno($curlResource);
-            $errmsg = curl_error($curlResource);
-            curl_close($curlResource);
-
-            if ($errno !== 0) {
-                throw new Exception(
-                    'Unable connection to the captcha server. Curl error #' . $errno . ' ' . $errmsg
-                );
-            }
+        $client = new Client();
+        /** @var yii\httpclient\Response $response */
+        $response = $client->createRequest()
+            ->setMethod('GET')
+            ->setUrl(self::SITE_VERIFY_URL)
+            ->setData(['secret' => $this->secret, 'response' => $value, 'remoteip' => Yii::$app->request->userIP])
+            ->send();
+        if (!$response->isOk) {
+            throw new Exception('Unable connection to the captcha server. Status code ' . $response->statusCode);
         }
 
-        return Json::decode($response);
+        return $response->data;
     }
 }
