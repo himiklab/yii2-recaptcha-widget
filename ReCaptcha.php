@@ -243,7 +243,17 @@ JS
             $divOptions['class'] = "{$divOptions['class']} {$this->widgetOptions['class']}";
         }
         $divOptions['input-id'] = $this->getReCaptchaId();
-        $divOptions['form-id'] = (isset($this->field) && $this->field->form !== null) ? $this->field->form->id : '';
+
+        if ($this->field !== null && $this->field->form !== null) {
+            if (!empty($this->field->form->options['id'])) {
+                $divOptions['form-id'] = $this->field->form->options['id'];
+            } else {
+                $divOptions['form-id'] = $this->field->form->id;
+            }
+        } else {
+            $divOptions['form-id'] = '';
+        }
+
         $divOptions['id'] = $this->getReCaptchaId() . '-recaptcha' .
             ($divOptions['form-id'] ? ('-' . $divOptions['form-id']) : '');
 
