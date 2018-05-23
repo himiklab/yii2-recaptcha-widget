@@ -10,7 +10,8 @@ namespace himiklab\yii2\recaptcha;
 use Yii;
 use yii\base\Exception;
 use yii\base\InvalidConfigException;
-use yii\httpclient\Client;
+use yii\httpclient\Client as HttpClient;
+use yii\httpclient\Request as HttpClientRequest;
 use yii\validators\Validator;
 
 /**
@@ -32,6 +33,9 @@ class ReCaptchaValidator extends Validator
     /** @var string */
     public $uncheckedMessage;
 
+    /** @var \yii\httpclient\Request */
+    public $httpClientRequest;
+
     /** @var boolean */
     protected $isValid = false;
 
@@ -47,6 +51,10 @@ class ReCaptchaValidator extends Validator
             } else {
                 throw new InvalidConfigException('Required `secret` param isn\'t set.');
             }
+        }
+
+        if (empty($this->httpClientRequest) || !($this->httpClientRequest instanceof HttpClientRequest)) {
+            $this->httpClientRequest = (new HttpClient())->createRequest();
         }
 
         if ($this->message === null) {
@@ -107,9 +115,7 @@ JS;
      */
     protected function getResponse($value)
     {
-        $client = new Client();
-        /** @var yii\httpclient\Response $response */
-        $response = $client->createRequest()
+        $response = $this->httpClientRequest
             ->setMethod('GET')
             ->setUrl(self::SITE_VERIFY_URL)
             ->setData(['secret' => $this->secret, 'response' => $value, 'remoteip' => Yii::$app->request->userIP])
