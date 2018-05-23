@@ -73,6 +73,9 @@ class ReCaptcha extends InputWidget
     /** @var string Your JS callback function that's executed when the user submits a successful CAPTCHA response. */
     public $jsCallback;
 
+    /** @var string Form field */
+    public $field;
+
     /**
      * @var string Your JS callback function that's executed when the recaptcha response expires and the user
      * needs to solve a new CAPTCHA.
