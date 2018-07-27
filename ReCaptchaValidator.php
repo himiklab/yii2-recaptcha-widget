@@ -36,6 +36,9 @@ class ReCaptchaValidator extends Validator
     /** @var \yii\httpclient\Request */
     public $httpClientRequest;
 
+    /** @var boolean For test */
+    public $isTest;
+
     /** @var boolean */
     protected $isValid = false;
 
@@ -59,6 +62,10 @@ class ReCaptchaValidator extends Validator
 
         if ($this->message === null) {
             $this->message = Yii::t('yii', 'The verification code is incorrect.');
+        }
+
+        if (empty($this->isTest)) {
+            $this->isTest = Yii::$app->reCaptcha->isTest;
         }
     }
 
@@ -91,6 +98,10 @@ JS;
      */
     protected function validateValue($value)
     {
+        if ($this->isTest) {
+            $this->isValid = ($value == true);
+        }
+
         if (!$this->isValid) {
             if (!empty($value)) {
                 $response = $this->getResponse($value);
