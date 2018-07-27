@@ -88,6 +88,9 @@ class ReCaptcha extends InputWidget
     /** @var array Additional html widget options, such as `class`. */
     public $widgetOptions = [];
 
+    /** @var boolean For test */
+    public $isTest;
+
     public function run()
     {
         $view = $this->view;
