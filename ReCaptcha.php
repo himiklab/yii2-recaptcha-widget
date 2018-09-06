@@ -208,7 +208,10 @@ JS
             $inputName = $this->name;
         }
 
-        echo Html::input('hidden', $inputName, null, ['id' => $inputId]);
+        $options = $this->options;
+        $options['id'] = $inputId;
+
+        echo Html::input('hidden', $inputName, null, $options);
     }
 
     protected function buildDivOptions()
