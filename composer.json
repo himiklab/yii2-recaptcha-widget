@@ -1,17 +1,17 @@
 {
-    "name": "ferrum/yii2-recaptcha-widget",
+    "name": "himiklab/yii2-recaptcha-widget",
     "description": "Yii2 Google reCAPTCHA widget",
     "keywords": ["yii2", "captcha", "recaptcha", "google", "widget"],
     "type": "yii2-extension",
     "license": "MIT",
     "support": {
-        "source": "https://github.com/ferrumfist/yii2-recaptcha-widget",
-        "issues": "https://github.com/ferrumfist/yii2-recaptcha-widget/issues"
+        "source": "https://github.com/himiklab/yii2-recaptcha-widget",
+        "issues": "https://github.com/himiklab/yii2-recaptcha-widget/issues"
     },
     "authors": [
         {
-            "name": "ferrumfist",
-            "homepage": "https://github.com/ferrumfist/"
+            "name": "HimikLab",
+            "homepage": "https://github.com/himiklab/"
         }
     ],
     "require": {
@@ -20,7 +20,7 @@
     },
     "autoload": {
         "psr-4": {
-            "ferrum\\yii2\\recaptcha\\": ""
+            "himiklab\\yii2\\recaptcha\\": ""
         }
     }
 }
