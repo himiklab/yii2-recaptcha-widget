@@ -179,7 +179,7 @@ JS
             return Html::getInputId($this->model, $this->attribute);
         }
 
-        return $this->id . '-' . $this->name;
+        return $this->id . '-' . $this->inputNameToId($this->name);
     }
 
     protected function getLanguageSuffix()
@@ -263,5 +263,10 @@ JS
             ($divOptions['data-form-id'] ? ('-' . $divOptions['data-form-id']) : '');
 
         return $divOptions;
+    }
+
+    protected function inputNameToId($name)
+    {
+        return str_replace(['[]', '][', '[', ']', ' ', '.'], ['', '-', '-', '', '-', '-'], strtolower($name));
     }
 }
