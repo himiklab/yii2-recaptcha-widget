@@ -18,9 +18,13 @@
         "yiisoft/yii2": "~2.0.11",
         "yiisoft/yii2-httpclient": "*"
     },
+    "require-dev": {
+        "phpunit/phpunit": "^4.8.34"
+    },
     "autoload": {
         "psr-4": {
-            "himiklab\\yii2\\recaptcha\\": ""
+            "himiklab\\yii2\\recaptcha\\": "src/",
+            "himiklab\\yii2\\recaptcha\\tests": "tests/"
         }
     }
 }
