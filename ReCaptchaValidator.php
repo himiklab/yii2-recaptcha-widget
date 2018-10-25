@@ -92,16 +92,12 @@ JS;
     protected function validateValue($value)
     {
         if (!$this->isValid) {
-            if (!empty($value)) {
-                $response = $this->getResponse($value);
-                if (!isset($response['success'])) {
-                    throw new Exception('Invalid recaptcha verify response.');
-                }
-
-                $this->isValid = (boolean)$response['success'];
-            } else {
-                $this->isValid = false;
+            $response = $this->getResponse($value);
+            if (!isset($response['success'])) {
+                throw new Exception('Invalid recaptcha verify response.');
             }
+
+            $this->isValid = $response['success'] === true;
         }
 
         return $this->isValid ? null : [$this->message, []];
