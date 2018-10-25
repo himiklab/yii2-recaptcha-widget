@@ -24,7 +24,7 @@
     "autoload": {
         "psr-4": {
             "himiklab\\yii2\\recaptcha\\": "src/",
-            "himiklab\\yii2\\recaptcha\\tests": "tests/"
+            "himiklab\\yii2\\recaptcha\\tests\\": "tests/"
         }
     }
 }
