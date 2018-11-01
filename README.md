@@ -110,6 +110,8 @@ or simply
 <?= \himiklab\yii2\recaptcha\ReCaptcha::widget(['name' => 'reCaptcha']) ?>
 ```
 
+* NOTE: Please disable ajax validation for ReCaptcha field!
+
 Resources
 ---------
 * [Google reCAPTCHA](https://developers.google.com/recaptcha)
