@@ -101,7 +101,7 @@ class ReCaptcha extends InputWidget
             }
         }
 
-        $arguments = http_build_query([
+        $arguments = \http_build_query([
             'hl' => $this->getLanguageSuffix(),
             'render' => 'explicit',
             'onload' => 'recaptchaOnloadCallback',
@@ -114,25 +114,25 @@ class ReCaptcha extends InputWidget
         );
         $view->registerJs(
             <<<'JS'
-var recaptchaOnloadCallback = function() {
-    jQuery(".g-recaptcha").each(function() {
+function recaptchaOnloadCallback() {
+    "use strict";
+    jQuery(".g-recaptcha").each(function () {
         var reCaptcha = jQuery(this);
         if (reCaptcha.data("recaptcha-client-id") === undefined) {
             var recaptchaClientId = grecaptcha.render(reCaptcha.attr("id"), {
-                "callback": function(response) {
+                "callback": function (response) {
                     if (reCaptcha.data("form-id") !== "") {
                         jQuery("#" + reCaptcha.data("input-id"), "#" + reCaptcha.data("form-id")).val(response)
                             .trigger("change");
                     } else {
-                        jQuery("#" + reCaptcha.data("input-id")).val(response)
-                            .trigger("change");
+                        jQuery("#" + reCaptcha.data("input-id")).val(response).trigger("change");
                     }
 
                     if (reCaptcha.attr("data-callback")) {
                         eval("(" + reCaptcha.attr("data-callback") + ")(response)");
                     }
                 },
-                "expired-callback": function() {
+                "expired-callback": function () {
                     if (reCaptcha.data("form-id") !== "") {
                         jQuery("#" + reCaptcha.data("input-id"), "#" + reCaptcha.data("form-id")).val("");
                     } else {
@@ -140,23 +140,23 @@ var recaptchaOnloadCallback = function() {
                     }
 
                     if (reCaptcha.attr("data-expired-callback")) {
-                         eval("(" + reCaptcha.attr("data-expired-callback") + ")()");
+                        eval("(" + reCaptcha.attr("data-expired-callback") + ")()");
                     }
                 },
             });
             reCaptcha.data("recaptcha-client-id", recaptchaClientId);
-            
+
             if (reCaptcha.data("size") === "invisible") {
                 grecaptcha.execute(recaptchaClientId);
             }
         }
     });
-};
+}
 JS
             , $view::POS_END, 'recaptcha-onload');
 
         if (Yii::$app->request->isAjax) {
-            $view->registerJs(<<<JS
+            $view->registerJs(<<<'JS'
 if (typeof grecaptcha !== "undefined") {
     recaptchaOnloadCallback();
 }
@@ -187,15 +187,15 @@ JS
         $currentAppLanguage = Yii::$app->language;
         $langsExceptions = ['zh-CN', 'zh-TW', 'zh-TW'];
 
-        if (strpos($currentAppLanguage, '-') === false) {
+        if (\strpos($currentAppLanguage, '-') === false) {
             return $currentAppLanguage;
         }
 
-        if (in_array($currentAppLanguage, $langsExceptions)) {
+        if (\in_array($currentAppLanguage, $langsExceptions)) {
             return $currentAppLanguage;
         }
 
-        return substr($currentAppLanguage, 0, strpos($currentAppLanguage, '-'));
+        return \substr($currentAppLanguage, 0, \strpos($currentAppLanguage, '-'));
     }
 
     protected function customFieldPrepare()
@@ -267,6 +267,6 @@ JS
 
     protected function inputNameToId($name)
     {
-        return str_replace(['[]', '][', '[', ']', ' ', '.'], ['', '-', '-', '', '-', '-'], strtolower($name));
+        return \str_replace(['[]', '][', '[', ']', ' ', '.'], ['', '-', '-', '', '-', '-'], \strtolower($name));
     }
 }
