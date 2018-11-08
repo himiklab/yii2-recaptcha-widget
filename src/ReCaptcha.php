@@ -109,8 +109,7 @@ class ReCaptcha extends InputWidget
 
         $view->registerJsFile(
             self::JS_API_URL . '?' . $arguments,
-            ['position' => $view::POS_END, 'async' => true, 'defer' => true],
-            'recaptcha-api'
+            ['position' => $view::POS_END, 'async' => true, 'defer' => true]
         );
         $view->registerJs(
             <<<'JS'
@@ -153,7 +152,7 @@ function recaptchaOnloadCallback() {
     });
 }
 JS
-            , $view::POS_END, 'recaptcha-onload');
+            , $view::POS_END);
 
         if (Yii::$app->request->isAjax) {
             $view->registerJs(<<<'JS'
