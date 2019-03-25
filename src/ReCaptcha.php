@@ -59,6 +59,9 @@ class ReCaptcha extends InputWidget
     /** @var string Your secret. */
     public $secret;
 
+    /** @var string Use [[SITE_VERIFY_URL_ALTERNATIVE]] when [[SITE_VERIFY_URL_DEFAULT]] is not accessible. */
+    public $siteVerifyUrl;
+
     /** @var string The color theme of the widget. [[THEME_LIGHT]] (default) or [[THEME_DARK]] */
     public $theme;
 
