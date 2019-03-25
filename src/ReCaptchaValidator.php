@@ -1,7 +1,7 @@
 <?php
 /**
  * @link https://github.com/himiklab/yii2-recaptcha-widget
- * @copyright Copyright (c) 2014-2018 HimikLab
+ * @copyright Copyright (c) 2014-2019 HimikLab
  * @license http://opensource.org/licenses/MIT MIT
  */
 
@@ -22,7 +22,8 @@ use yii\validators\Validator;
  */
 class ReCaptchaValidator extends Validator
 {
-    const SITE_VERIFY_URL = 'https://www.google.com/recaptcha/api/siteverify';
+    const SITE_VERIFY_URL_DEFAULT = 'https://www.google.com/recaptcha/api/siteverify';
+    const SITE_VERIFY_URL_ALTERNATIVE = 'https://www.recaptcha.net/recaptcha/api/siteverify';
 
     /** @var boolean Whether to skip this validator if the input is empty. */
     public $skipOnEmpty = false;
@@ -36,24 +37,35 @@ class ReCaptchaValidator extends Validator
     /** @var \yii\httpclient\Request */
     public $httpClientRequest;
 
+    /** @var string Use [[SITE_VERIFY_URL_ALTERNATIVE]] when [[SITE_VERIFY_URL_DEFAULT]] is not accessible. */
+    public $siteVerifyUrl;
+
     /** @var boolean */
     protected $isValid = false;
 
     public function init()
     {
         parent::init();
+        /** @var self $reCaptchaComponent */
+        $reCaptchaComponent = Yii::$app->reCaptcha;
 
-        if (empty($this->secret)) {
-            /** @var ReCaptcha $reCaptcha */
-            $reCaptcha = Yii::$app->reCaptcha;
-            if ($reCaptcha && !empty($reCaptcha->secret)) {
-                $this->secret = $reCaptcha->secret;
+        if (!$this->secret) {
+            if ($reCaptchaComponent && $reCaptchaComponent->secret) {
+                $this->secret = $reCaptchaComponent->secret;
             } else {
                 throw new InvalidConfigException('Required `secret` param isn\'t set.');
             }
         }
 
-        if (empty($this->httpClientRequest) || !($this->httpClientRequest instanceof HttpClientRequest)) {
+        if (!$this->siteVerifyUrl) {
+            if ($reCaptchaComponent && $reCaptchaComponent->siteVerifyUrl) {
+                $this->siteVerifyUrl = $reCaptchaComponent->siteVerifyUrl;
+            } else {
+                $this->siteVerifyUrl = self::SITE_VERIFY_URL_DEFAULT;
+            }
+        }
+
+        if (!$this->httpClientRequest || !($this->httpClientRequest instanceof HttpClientRequest)) {
             $this->httpClientRequest = (new HttpClient())->createRequest();
         }
 
@@ -113,7 +125,7 @@ JS;
     {
         $response = $this->httpClientRequest
             ->setMethod('GET')
-            ->setUrl(self::SITE_VERIFY_URL)
+            ->setUrl($this->siteVerifyUrl)
             ->setData(['secret' => $this->secret, 'response' => $value, 'remoteip' => Yii::$app->request->userIP])
             ->send();
         if (!$response->isOk) {

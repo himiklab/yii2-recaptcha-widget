@@ -1,7 +1,7 @@
 <?php
 /**
  * @link https://github.com/himiklab/yii2-recaptcha-widget
- * @copyright Copyright (c) 2014-2018 HimikLab
+ * @copyright Copyright (c) 2014-2019 HimikLab
  * @license http://opensource.org/licenses/MIT MIT
  */
 
@@ -40,7 +40,8 @@ use yii\widgets\InputWidget;
  */
 class ReCaptcha extends InputWidget
 {
-    const JS_API_URL = '//www.google.com/recaptcha/api.js';
+    const JS_API_URL_DEFAULT = '//www.google.com/recaptcha/api.js';
+    const JS_API_URL_ALTERNATIVE = '//www.recaptcha.net/recaptcha/api.js';
 
     const THEME_LIGHT = 'light';
     const THEME_DARK = 'dark';
@@ -73,6 +74,9 @@ class ReCaptcha extends InputWidget
     /** @var string Your JS callback function that's executed when the user submits a successful CAPTCHA response. */
     public $jsCallback;
 
+    /** @var string Use [[JS_API_URL_ALTERNATIVE]] when [[JS_API_URL_DEFAULT]] is not accessible. */
+    public $jsApiUrl;
+
     /**
      * @var string Your JS callback function that's executed when the recaptcha response expires and the user
      * needs to solve a new CAPTCHA.
@@ -91,13 +95,22 @@ class ReCaptcha extends InputWidget
     public function run()
     {
         $view = $this->view;
-        if (empty($this->siteKey)) {
-            /** @var ReCaptcha $reCaptcha */
-            $reCaptcha = Yii::$app->reCaptcha;
-            if ($reCaptcha && !empty($reCaptcha->siteKey)) {
-                $this->siteKey = $reCaptcha->siteKey;
+        /** @var self $reCaptchaComponent */
+        $reCaptchaComponent = Yii::$app->reCaptcha;
+
+        if (!$this->siteKey) {
+            if ($reCaptchaComponent && $reCaptchaComponent->siteKey) {
+                $this->siteKey = $reCaptchaComponent->siteKey;
             } else {
                 throw new InvalidConfigException('Required `siteKey` param isn\'t set.');
+            }
+        }
+
+        if (!$this->jsApiUrl) {
+            if ($reCaptchaComponent && $reCaptchaComponent->jsApiUrl) {
+                $this->jsApiUrl = $reCaptchaComponent->jsApiUrl;
+            } else {
+                $this->jsApiUrl = self::JS_API_URL_DEFAULT;
             }
         }
 
@@ -108,7 +121,7 @@ class ReCaptcha extends InputWidget
         ]);
 
         $view->registerJsFile(
-            self::JS_API_URL . '?' . $arguments,
+            $this->jsApiUrl . '?' . $arguments,
             ['position' => $view::POS_END, 'async' => true, 'defer' => true]
         );
         $view->registerJs(
