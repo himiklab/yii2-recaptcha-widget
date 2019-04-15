@@ -28,7 +28,7 @@ class ReCaptchaValidatorTest extends TestCase
     public function testValidateValueFailure()
     {
         $this->validatorClass
-            ->expects($this->exactly(2))
+            ->expects($this->once())
             ->method('getResponse')
             ->willReturn(['success' => false]);
 

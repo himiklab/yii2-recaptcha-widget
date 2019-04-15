@@ -1,6 +1,6 @@
 {
     "name": "himiklab/yii2-recaptcha-widget",
-    "description": "Yii2 Google reCAPTCHA widget",
+    "description": "Yii2 Google reCAPTCHA v2 and v3 widget",
     "keywords": ["yii2", "captcha", "recaptcha", "google", "widget"],
     "type": "yii2-extension",
     "license": "MIT",

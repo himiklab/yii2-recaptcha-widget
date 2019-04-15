@@ -1,8 +1,13 @@
 Google reCAPTCHA widget for Yii2
 ================================
-Based on reCaptcha API 2.0.
+Based on Google reCaptcha API 2.0 and 3.0.
 
 [![Packagist](https://img.shields.io/packagist/dt/himiklab/yii2-recaptcha-widget.svg)]() [![Packagist](https://img.shields.io/packagist/v/himiklab/yii2-recaptcha-widget.svg)]()  [![license](https://img.shields.io/badge/License-MIT-yellow.svg)]()
+
+Upgrade to 2.x version
+------------
+Warning! Classes `ReCaptcha` and `ReCaptchaValidator` is deprecated. Please replace their to `ReCaptchaConfig`,
+`ReCaptcha2` and `ReCaptchaValidator2`.
 
 Installation
 ------------
@@ -22,7 +27,7 @@ or add
 
 to the `require` section of your application's `composer.json` file.
 
-* [Sign up for an reCAPTCHA API keys](https://www.google.com/recaptcha/admin#createsite).
+* [Sign up for an reCAPTCHA API keys](https://www.google.com/recaptcha/admin/create).
 
 * Configure the component in your configuration file (web.php). The parameters siteKey and secret are optional.
 But if you leave them out you need to set them in every validation rule and every view where you want to use this widget.
@@ -31,16 +36,18 @@ If a siteKey or secret is set in an individual view or validation rule that woul
 ```php
 'components' => [
     'reCaptcha' => [
-        'name' => 'reCaptcha',
-        'class' => 'himiklab\yii2\recaptcha\ReCaptcha',
-        'siteKey' => 'your siteKey',
-        'secret' => 'your secret key',
+        'class' => 'himiklab\yii2\recaptcha\ReCaptchaConfig',
+        'siteKeyV2' => 'your siteKey v2',
+        'secretV2' => 'your secret key v2',
+        'siteKeyV3' => 'your siteKey v3',
+        'secretV3' => 'your secret key v3',
     ],
     ...
 ```
 
-* Add `ReCaptchaValidator` in your model, for example:
+* Add `ReCaptchaValidator2` or `ReCaptchaValidator3` in your model, for example:
 
+v2
 ```php
 public $reCaptcha;
 
@@ -48,31 +55,26 @@ public function rules()
 {
   return [
       // ...
-      [['reCaptcha'], \himiklab\yii2\recaptcha\ReCaptchaValidator::className(), 'secret' => 'your secret key', 'uncheckedMessage' => 'Please confirm that you are not a bot.']
+      [['reCaptcha'], \himiklab\yii2\recaptcha\ReCaptchaValidator2::className(),
+        'secret' => 'your secret key', // unnecessary is reCaptcha component was set up
+        'uncheckedMessage' => 'Please confirm that you are not a bot.'],
   ];
 }
 ```
 
-or just
-
+v3
 ```php
+public $reCaptcha;
+
 public function rules()
 {
   return [
       // ...
-      [[], \himiklab\yii2\recaptcha\ReCaptchaValidator::className(), 'secret' => 'your secret key']
-  ];
-}
-```
-
-or simply
-
-```php
-public function rules()
-{
-  return [
-      // ...
-      [[], \himiklab\yii2\recaptcha\ReCaptchaValidator::className()]
+      [['reCaptcha'], \himiklab\yii2\recaptcha\ReCaptchaValidator3::className(),
+        'secret' => 'your secret key', // unnecessary is reCaptcha component was set up
+        'threshold' => 0.5,
+        'action' => 'homepage',
+      ],
   ];
 }
 ```
@@ -81,37 +83,51 @@ Usage
 -----
 For example:
 
+v2
 ```php
 <?= $form->field($model, 'reCaptcha')->widget(
-    \himiklab\yii2\recaptcha\ReCaptcha::className(),
-    ['siteKey' => 'your siteKey']
+    \himiklab\yii2\recaptcha\ReCaptcha2::className(),
+    [
+        'siteKey' => 'your siteKey', // unnecessary is reCaptcha component was set up
+    ]
+) ?>
+```
+
+v3
+```php
+<?= $form->field($model, 'reCaptcha')->widget(
+    \himiklab\yii2\recaptcha\ReCaptcha3::className(),
+    [
+        'siteKey' => 'your siteKey', // unnecessary is reCaptcha component was set up
+        'action' => 'homepage',
+    ]
 ) ?>
 ```
 
 or
 
+v2
 ```php
-<?= $form->field($model, 'reCaptcha')->widget(\himiklab\yii2\recaptcha\ReCaptcha::className()) ?>
-```
-
-or
-
-```php
-<?= \himiklab\yii2\recaptcha\ReCaptcha::widget([
+<?= \himiklab\yii2\recaptcha\ReCaptcha2::widget([
     'name' => 'reCaptcha',
-    'siteKey' => 'your siteKey',
-    'widgetOptions' => ['class' => 'col-sm-offset-3']
+    'siteKey' => 'your siteKey', // unnecessary is reCaptcha component was set up
+    'widgetOptions' => ['class' => 'col-sm-offset-3'],
 ]) ?>
 ```
 
-or simply
-
+v3
 ```php
-<?= \himiklab\yii2\recaptcha\ReCaptcha::widget(['name' => 'reCaptcha']) ?>
+<?= \himiklab\yii2\recaptcha\ReCaptcha3::widget([
+    'name' => 'reCaptcha',
+    'siteKey' => 'your siteKey', // unnecessary is reCaptcha component was set up
+    'action' => 'homepage',
+    'widgetOptions' => ['class' => 'col-sm-offset-3'],
+]) ?>
 ```
 
 * NOTE: Please disable ajax validation for ReCaptcha field!
 
 Resources
 ---------
-* [Google reCAPTCHA](https://developers.google.com/recaptcha)
+* [Google reCAPTCHA v2](https://developers.google.com/recaptcha)
+* [Google reCAPTCHA v3](https://developers.google.com/recaptcha/docs/v3)
