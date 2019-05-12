@@ -69,10 +69,6 @@ abstract class ReCaptchaBaseValidator extends Validator
     {
         parent::init();
 
-        if (!$this->httpClientRequest || !($this->httpClientRequest instanceof HttpClientRequest)) {
-            $this->httpClientRequest = (new HttpClient())->createRequest();
-        }
-
         if ($this->message === null) {
             $this->message = Yii::t('yii', 'The verification code is incorrect.');
         }
@@ -116,6 +112,14 @@ abstract class ReCaptchaBaseValidator extends Validator
                 $this->checkHostName = $reCaptchaConfig->checkHostName;
             } else {
                 $this->checkHostName = false;
+            }
+        }
+
+        if (!$this->httpClientRequest) {
+            if ($reCaptchaConfig && $reCaptchaConfig->httpClientRequest) {
+                $this->httpClientRequest = $reCaptchaConfig->httpClientRequest;
+            } else {
+                $this->httpClientRequest = (new HttpClient())->createRequest();
             }
         }
     }

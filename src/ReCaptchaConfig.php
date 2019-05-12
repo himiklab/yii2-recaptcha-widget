@@ -42,4 +42,7 @@ class ReCaptchaConfig
 
     /** @var boolean Check host name. */
     public $checkHostName;
+
+    /** @var \yii\httpclient\Request */
+    public $httpClientRequest;
 }
