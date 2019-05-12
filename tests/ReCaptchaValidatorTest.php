@@ -19,7 +19,7 @@ class ReCaptchaValidatorTest extends TestCase
         $this->validatorClass
             ->expects($this->once())
             ->method('getResponse')
-            ->willReturn(['success' => true]);
+            ->willReturn(['success' => true, 'hostname' => 'localhost']);
 
         $this->assertNull($this->validatorMethod->invoke($this->validatorClass, 'test'));
         $this->assertNull($this->validatorMethod->invoke($this->validatorClass, 'test'));
@@ -30,7 +30,7 @@ class ReCaptchaValidatorTest extends TestCase
         $this->validatorClass
             ->expects($this->once())
             ->method('getResponse')
-            ->willReturn(['success' => false]);
+            ->willReturn(['success' => false, 'hostname' => 'localhost']);
 
         $this->assertNotNull($this->validatorMethod->invoke($this->validatorClass, 'test'));
         $this->assertNotNull($this->validatorMethod->invoke($this->validatorClass, 'test'));
@@ -47,12 +47,43 @@ class ReCaptchaValidatorTest extends TestCase
         $this->validatorMethod->invoke($this->validatorClass, 'test');
     }
 
+    public function testHostNameValidateFailure()
+    {
+        $this->validatorClass
+            ->expects($this->once())
+            ->method('getResponse')
+            ->willReturn(['success' => false, 'hostname' => 'localhost']);
+        $this->validatorClass
+            ->expects($this->once())
+            ->method('getHostName')
+            ->willReturn('test');
+        $this->validatorClass->checkHostName = true;
+
+        $this->setExpectedException('yii\base\Exception');
+        $this->validatorMethod->invoke($this->validatorClass, 'test');
+    }
+
+    public function testHostNameValidateSuccess()
+    {
+        $this->validatorClass
+            ->expects($this->once())
+            ->method('getResponse')
+            ->willReturn(['success' => false, 'hostname' => 'localhost']);
+        $this->validatorClass
+            ->expects($this->once())
+            ->method('getHostName')
+            ->willReturn('localhost');
+        $this->validatorClass->checkHostName = true;
+
+        $this->validatorMethod->invoke($this->validatorClass, 'test');
+    }
+
     public function setUp()
     {
         parent::setUp();
         $this->validatorClass = $this->getMockBuilder(ReCaptchaValidator::className())
             ->disableOriginalConstructor()
-            ->setMethods(['getResponse'])
+            ->setMethods(['getResponse', 'getHostName'])
             ->getMock();
 
         $this->validatorMethod = (new ReflectionClass(ReCaptchaValidator::className()))->getMethod('validateValue');
