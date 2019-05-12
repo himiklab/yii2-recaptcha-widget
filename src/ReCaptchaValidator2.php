@@ -77,7 +77,7 @@ JS;
             } else {
                 $response = $this->getResponse($value);
                 if (!isset($response['success'], $response['hostname']) ||
-                    ($this->checkHostName && $response['hostname'] !== Yii::$app->request->hostName)
+                    ($this->checkHostName && $response['hostname'] !== $this->getHostName())
                 ) {
                     throw new Exception('Invalid recaptcha verify response.');
                 }
@@ -103,5 +103,10 @@ JS;
                 throw new InvalidConfigException('Required `secret` param isn\'t set.');
             }
         }
+    }
+
+    protected function getHostName()
+    {
+        return Yii::$app->request->hostName;
     }
 }

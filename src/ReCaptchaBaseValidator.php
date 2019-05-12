@@ -10,7 +10,6 @@ namespace himiklab\yii2\recaptcha;
 use Yii;
 use yii\base\Exception;
 use yii\httpclient\Client as HttpClient;
-use yii\httpclient\Request as HttpClientRequest;
 use yii\validators\Validator;
 
 /**
