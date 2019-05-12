@@ -64,29 +64,22 @@ class ReCaptcha3 extends InputWidget
     /** @var string */
     public $configComponentName = 'reCaptcha';
 
+    public function __construct($siteKey = null, $jsApiUrl = null, $config = [])
+    {
+        if ($siteKey && !$this->siteKey) {
+            $this->siteKey = $siteKey;
+        }
+        if ($jsApiUrl && !$this->jsApiUrl) {
+            $this->jsApiUrl = $jsApiUrl;
+        }
+
+        parent::__construct($config);
+    }
+
     public function init()
     {
         parent::init();
-        /** @var ReCaptchaConfig $reCaptchaConfig */
-        $reCaptchaConfig = Yii::$app->get($this->configComponentName, false);
-
-        if (!$this->siteKey) {
-            if ($reCaptchaConfig && $reCaptchaConfig->siteKeyV3) {
-                $this->siteKey = $reCaptchaConfig->siteKeyV3;
-            } else {
-                throw new InvalidConfigException('Required `siteKey` param isn\'t set.');
-            }
-        }
-        if (!$this->jsApiUrl) {
-            if ($reCaptchaConfig && $reCaptchaConfig->jsApiUrl) {
-                $this->jsApiUrl = $reCaptchaConfig->jsApiUrl;
-            } else {
-                $this->jsApiUrl = ReCaptchaConfig::JS_API_URL_DEFAULT;
-            }
-        }
-        if (!$this->action) {
-            $this->action = \preg_replace('/[^a-zA-Z\d\/]/', '', \urldecode(Yii::$app->request->url));
-        }
+        $this->configComponentProcess();
     }
 
     public function run()
@@ -151,5 +144,29 @@ JS
     protected function inputNameToId($name)
     {
         return \str_replace(['[]', '][', '[', ']', ' ', '.'], ['', '-', '-', '', '-', '-'], \strtolower($name));
+    }
+
+    protected function configComponentProcess()
+    {
+        /** @var ReCaptchaConfig $reCaptchaConfig */
+        $reCaptchaConfig = Yii::$app->get($this->configComponentName, false);
+
+        if (!$this->siteKey) {
+            if ($reCaptchaConfig && $reCaptchaConfig->siteKeyV3) {
+                $this->siteKey = $reCaptchaConfig->siteKeyV3;
+            } else {
+                throw new InvalidConfigException('Required `siteKey` param isn\'t set.');
+            }
+        }
+        if (!$this->jsApiUrl) {
+            if ($reCaptchaConfig && $reCaptchaConfig->jsApiUrl) {
+                $this->jsApiUrl = $reCaptchaConfig->jsApiUrl;
+            } else {
+                $this->jsApiUrl = ReCaptchaConfig::JS_API_URL_DEFAULT;
+            }
+        }
+        if (!$this->action) {
+            $this->action = \preg_replace('/[^a-zA-Z\d\/]/', '', \urldecode(Yii::$app->request->url));
+        }
     }
 }

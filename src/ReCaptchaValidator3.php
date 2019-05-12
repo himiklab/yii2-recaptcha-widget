@@ -26,19 +26,24 @@ class ReCaptchaValidator3 extends ReCaptchaBaseValidator
     /** @var string|boolean Set to false if you don`t need to check action. */
     public $action;
 
+    public function __construct(
+        $secret = null,
+        $siteVerifyUrl = null,
+        $checkHostName = null,
+        yii\httpclient\Request $httpClientRequest = null,
+        $config = [])
+    {
+        if ($secret && !$this->secret) {
+            $this->secret = $secret;
+        }
+
+        parent::__construct($siteVerifyUrl, $checkHostName, $httpClientRequest, $config);
+    }
+
     public function init()
     {
         parent::init();
-        /** @var ReCaptchaConfig $reCaptchaConfig */
-        $reCaptchaConfig = Yii::$app->get($this->configComponentName, false);
-
-        if (!$this->secret) {
-            if ($reCaptchaConfig && $reCaptchaConfig->secretV3) {
-                $this->secret = $reCaptchaConfig->secretV3;
-            } else {
-                throw new InvalidConfigException('Required `secret` param isn\'t set.');
-            }
-        }
+        $this->configComponentProcess();
 
         if ($this->action === null) {
             $this->action = \preg_replace('/[^a-zA-Z\d\/]/', '', \urldecode(Yii::$app->request->url));
@@ -79,5 +84,21 @@ class ReCaptchaValidator3 extends ReCaptchaBaseValidator
         }
 
         return $this->isValid ? null : [$this->message, []];
+    }
+
+    protected function configComponentProcess()
+    {
+        parent::configComponentProcess();
+
+        /** @var ReCaptchaConfig $reCaptchaConfig */
+        $reCaptchaConfig = Yii::$app->get($this->configComponentName, false);
+
+        if (!$this->secret) {
+            if ($reCaptchaConfig && $reCaptchaConfig->secretV3) {
+                $this->secret = $reCaptchaConfig->secretV3;
+            } else {
+                throw new InvalidConfigException('Required `secret` param isn\'t set.');
+            }
+        }
     }
 }

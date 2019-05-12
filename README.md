@@ -45,6 +45,31 @@ If a siteKey or secret is set in an individual view or validation rule that woul
     ...
 ```
 
+or use DI container:
+
+```php
+'container' => [
+    'definitions' => [
+        himiklab\yii2\recaptcha\ReCaptcha2::className() => function ($container, $params, $config) {
+            return new himiklab\yii2\recaptcha\ReCaptcha2(
+                'your siteKey v2',
+                '', // default
+                $config
+            );
+        },
+        himiklab\yii2\recaptcha\ReCaptchaValidator2::className() => function ($container, $params, $config) {
+            return new himiklab\yii2\recaptcha\ReCaptchaValidator2(
+                'your secret key v2',
+                '', // default
+                null, // default
+                null, // default
+                $config
+            );
+        },
+    ],
+],
+```
+
 * Add `ReCaptchaValidator2` or `ReCaptchaValidator3` in your model, for example:
 
 v2
@@ -56,7 +81,7 @@ public function rules()
   return [
       // ...
       [['reCaptcha'], \himiklab\yii2\recaptcha\ReCaptchaValidator2::className(),
-        'secret' => 'your secret key', // unnecessary is reCaptcha component was set up
+        'secret' => 'your secret key', // unnecessary if reСaptcha is already configured
         'uncheckedMessage' => 'Please confirm that you are not a bot.'],
   ];
 }
@@ -71,7 +96,7 @@ public function rules()
   return [
       // ...
       [['reCaptcha'], \himiklab\yii2\recaptcha\ReCaptchaValidator3::className(),
-        'secret' => 'your secret key', // unnecessary is reCaptcha component was set up
+        'secret' => 'your secret key', // unnecessary if reСaptcha is already configured
         'threshold' => 0.5,
         'action' => 'homepage',
       ],
