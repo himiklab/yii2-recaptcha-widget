@@ -53,6 +53,9 @@ class ReCaptcha extends ReCaptcha2
     /** @var boolean */
     public $checkHostName = false;
 
+    /** @var \yii\httpclient\Request */
+    public $httpClientRequest;
+
     public function init()
     {
     }
