@@ -23,7 +23,11 @@
     },
     "autoload": {
         "psr-4": {
-            "himiklab\\yii2\\recaptcha\\": "src/",
+            "himiklab\\yii2\\recaptcha\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
             "himiklab\\yii2\\recaptcha\\tests\\": "tests/"
         }
     }
