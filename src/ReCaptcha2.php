@@ -258,7 +258,7 @@ JS
         }
         $divOptions['data-input-id'] = $this->getReCaptchaId();
 
-        if ($this->field && $this->field->form) {
+        if (isset($this->field) && $this->field->form !== null) {
             if ($this->field->form->options['id']) {
                 $divOptions['data-form-id'] = $this->field->form->options['id'];
             } else {
