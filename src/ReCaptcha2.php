@@ -133,15 +133,22 @@ function recaptchaOnloadCallback() {
     jQuery(".g-recaptcha").each(function () {
         const reCaptcha = jQuery(this);
         const isInvisible = reCaptcha.data("size") === "invisible";
-        const form = reCaptcha.parents('form');
-        var isSuccess = false;        
+        
+        const formId = reCaptcha.data("form-id");
+        let form;
+        let isSuccess = false;
+        if (formId !== "") {
+            form = jQuery("#" + formId);
+        } else {
+            form = reCaptcha.parents('form');
+        }     
 
         if (reCaptcha.data("recaptcha-client-id") === undefined) {
             const recaptchaClientId = grecaptcha.render(reCaptcha.attr("id"), {
                 "callback": function (response) {
                     isSuccess = true;
-                    if (reCaptcha.data("form-id") !== "") {
-                        jQuery("#" + reCaptcha.data("input-id"), "#" + reCaptcha.data("form-id")).val(response)
+                    if (formId !== "") {
+                        jQuery("#" + reCaptcha.data("input-id"), "#" + formId).val(response)
                             .trigger("change");
                     } else {
                         jQuery("#" + reCaptcha.data("input-id")).val(response).trigger("change");
@@ -156,8 +163,8 @@ function recaptchaOnloadCallback() {
                     }
                 },
                 "expired-callback": function () {
-                    if (reCaptcha.data("form-id") !== "") {
-                        jQuery("#" + reCaptcha.data("input-id"), "#" + reCaptcha.data("form-id")).val("");
+                    if (formId !== "") {
+                        jQuery("#" + reCaptcha.data("input-id"), "#" + formId).val("");
                     } else {
                         jQuery("#" + reCaptcha.data("input-id")).val("");
                     }
@@ -169,7 +176,7 @@ function recaptchaOnloadCallback() {
             });
             reCaptcha.data("recaptcha-client-id", recaptchaClientId);
             
-            if (isInvisible) {
+            if (isInvisible && form.length) {
                 form.on('beforeSubmit', function(){
                     if(false === isSuccess){
                         grecaptcha.execute(recaptchaClientId);
