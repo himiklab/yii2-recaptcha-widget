@@ -42,8 +42,6 @@ class ReCaptcha extends ReCaptcha2
     const JS_API_URL_DEFAULT = '//www.google.com/recaptcha/api.js';
     const JS_API_URL_ALTERNATIVE = '//www.recaptcha.net/recaptcha/api.js';
 
-    const SIZE_INVISIBLE = 'invisible';
-
     /** @var string Your secret. */
     public $secret;
 
