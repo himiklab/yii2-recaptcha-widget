@@ -50,6 +50,7 @@ class ReCaptcha2 extends InputWidget
 
     const SIZE_NORMAL = 'normal';
     const SIZE_COMPACT = 'compact';
+    const SIZE_INVISIBLE = 'invisible';
 
     /** @var string Your sitekey. */
     public $siteKey;
@@ -131,11 +132,23 @@ function recaptchaOnloadCallback() {
     "use strict";
     jQuery(".g-recaptcha").each(function () {
         const reCaptcha = jQuery(this);
+        const isInvisible = reCaptcha.data("size") === "invisible";
+        
+        const formId = reCaptcha.data("form-id");
+        let form;
+        let isSuccess = false;
+        if (formId !== "") {
+            form = jQuery("#" + formId);
+        } else {
+            form = reCaptcha.parents('form');
+        }     
+
         if (reCaptcha.data("recaptcha-client-id") === undefined) {
             const recaptchaClientId = grecaptcha.render(reCaptcha.attr("id"), {
                 "callback": function (response) {
-                    if (reCaptcha.data("form-id") !== "") {
-                        jQuery("#" + reCaptcha.data("input-id"), "#" + reCaptcha.data("form-id")).val(response)
+                    isSuccess = true;
+                    if (formId !== "") {
+                        jQuery("#" + reCaptcha.data("input-id"), "#" + formId).val(response)
                             .trigger("change");
                     } else {
                         jQuery("#" + reCaptcha.data("input-id")).val(response).trigger("change");
@@ -144,10 +157,14 @@ function recaptchaOnloadCallback() {
                     if (reCaptcha.attr("data-callback")) {
                         eval("(" + reCaptcha.attr("data-callback") + ")(response)");
                     }
+                    
+                     if (isInvisible) {
+                        form.submit();
+                    }
                 },
                 "expired-callback": function () {
-                    if (reCaptcha.data("form-id") !== "") {
-                        jQuery("#" + reCaptcha.data("input-id"), "#" + reCaptcha.data("form-id")).val("");
+                    if (formId !== "") {
+                        jQuery("#" + reCaptcha.data("input-id"), "#" + formId).val("");
                     } else {
                         jQuery("#" + reCaptcha.data("input-id")).val("");
                     }
@@ -158,6 +175,17 @@ function recaptchaOnloadCallback() {
                 },
             });
             reCaptcha.data("recaptcha-client-id", recaptchaClientId);
+            
+            if (isInvisible && form.length) {
+                form.on('beforeSubmit', function(){
+                    if(false === isSuccess){
+                        grecaptcha.execute(recaptchaClientId);
+                        return false;
+                    }
+                    
+                    return true;
+                });
+            }
         }
     });
 }

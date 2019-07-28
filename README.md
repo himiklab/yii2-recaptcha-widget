@@ -110,7 +110,9 @@ For example:
 
 v2
 ```php
-<?= $form->field($model, 'reCaptcha')->widget(
+<?= $form->field($model, 'reCaptcha', 
+    ['enableClientValidation' => false, 'enableAjaxValidation' => false] // If you using usable invisible reCaptcha
+)->widget(
     \himiklab\yii2\recaptcha\ReCaptcha2::className(),
     [
         'siteKey' => 'your siteKey', // unnecessary is reCaptcha component was set up
@@ -150,7 +152,7 @@ v3
 ]) ?>
 ```
 
-* NOTE: Please disable ajax validation for ReCaptcha field!
+* NOTE: Please disable ajax validation for ReCaptcha field! If you using usable "invisible" disable client validation!
 
 Resources
 ---------
