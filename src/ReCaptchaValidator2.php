@@ -75,14 +75,17 @@ JS;
             if (!$value) {
                 $this->isValid = false;
             } else {
-                $response = $this->getResponse($value);
-                if (!isset($response['success'], $response['hostname']) ||
-                    ($this->checkHostName && $response['hostname'] !== $this->getHostName())
-                ) {
-                    throw new Exception('Invalid recaptcha verify response.');
-                }
+                if (isset($response['error-codes'])) {
+                    $this->isValid = false;
+                } else {
+                    if (!isset($response['success'], $response['hostname']) ||
+                        ($this->checkHostName && $response['hostname'] !== $this->getHostName())
+                    ) {
+                        throw new Exception('Invalid recaptcha verify response.');
+                    }
 
-                $this->isValid = $response['success'] === true;
+                    $this->isValid = $response['success'] === true;
+                }
             }
         }
 
