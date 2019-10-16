@@ -15,14 +15,14 @@ The preferred way to install this extension is through [composer](http://getcomp
 
 * Either run
 
-```
-php composer.phar require --prefer-dist "himiklab/yii2-recaptcha-widget" "*"
+```sh
+composer require himiklab/yii2-recaptcha-widget
 ```
 
 or add
 
 ```json
-"himiklab/yii2-recaptcha-widget" : "*"
+"himiklab/yii2-recaptcha-widget" : "^2.0"
 ```
 
 to the `require` section of your application's `composer.json` file.
@@ -50,14 +50,14 @@ or use DI container:
 ```php
 'container' => [
     'definitions' => [
-        himiklab\yii2\recaptcha\ReCaptcha2::className() => function ($container, $params, $config) {
+        himiklab\yii2\recaptcha\ReCaptcha2::class => function ($container, $params, $config) {
             return new himiklab\yii2\recaptcha\ReCaptcha2(
                 'your siteKey v2',
                 '', // default
                 $config
             );
         },
-        himiklab\yii2\recaptcha\ReCaptchaValidator2::className() => function ($container, $params, $config) {
+        himiklab\yii2\recaptcha\ReCaptchaValidator2::class => function ($container, $params, $config) {
             return new himiklab\yii2\recaptcha\ReCaptchaValidator2(
                 'your secret key v2',
                 '', // default
@@ -80,7 +80,7 @@ public function rules()
 {
   return [
       // ...
-      [['reCaptcha'], \himiklab\yii2\recaptcha\ReCaptchaValidator2::className(),
+      [['reCaptcha'], \himiklab\yii2\recaptcha\ReCaptchaValidator2::class,
         'secret' => 'your secret key', // unnecessary if reСaptcha is already configured
         'uncheckedMessage' => 'Please confirm that you are not a bot.'],
   ];
@@ -95,7 +95,7 @@ public function rules()
 {
   return [
       // ...
-      [['reCaptcha'], \himiklab\yii2\recaptcha\ReCaptchaValidator3::className(),
+      [['reCaptcha'], \himiklab\yii2\recaptcha\ReCaptchaValidator3::class,
         'secret' => 'your secret key', // unnecessary if reСaptcha is already configured
         'threshold' => 0.5,
         'action' => 'homepage',
@@ -111,7 +111,7 @@ For example:
 v2
 ```php
 <?= $form->field($model, 'reCaptcha')->widget(
-    \himiklab\yii2\recaptcha\ReCaptcha2::className(),
+    \himiklab\yii2\recaptcha\ReCaptcha2::class,
     [
         'siteKey' => 'your siteKey', // unnecessary is reCaptcha component was set up
     ]
@@ -121,7 +121,7 @@ v2
 v3
 ```php
 <?= $form->field($model, 'reCaptcha')->widget(
-    \himiklab\yii2\recaptcha\ReCaptcha3::className(),
+    \himiklab\yii2\recaptcha\ReCaptcha3::class,
     [
         'siteKey' => 'your siteKey', // unnecessary is reCaptcha component was set up
         'action' => 'homepage',
@@ -135,7 +135,7 @@ v2
 ```php
 <?= \himiklab\yii2\recaptcha\ReCaptcha2::widget([
     'name' => 'reCaptcha',
-    'siteKey' => 'your siteKey', // unnecessary is reCaptcha component was set up
+    'siteKey' => 'your siteKey', // unnecessary if reCaptcha component was set up
     'widgetOptions' => ['class' => 'col-sm-offset-3'],
 ]) ?>
 ```
@@ -144,7 +144,7 @@ v3
 ```php
 <?= \himiklab\yii2\recaptcha\ReCaptcha3::widget([
     'name' => 'reCaptcha',
-    'siteKey' => 'your siteKey', // unnecessary is reCaptcha component was set up
+    'siteKey' => 'your siteKey', // unnecessary if reCaptcha component was set up
     'action' => 'homepage',
     'widgetOptions' => ['class' => 'col-sm-offset-3'],
 ]) ?>
