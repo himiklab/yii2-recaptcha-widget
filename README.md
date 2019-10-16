@@ -113,7 +113,7 @@ v2
 <?= $form->field($model, 'reCaptcha')->widget(
     \himiklab\yii2\recaptcha\ReCaptcha2::class,
     [
-        'siteKey' => 'your siteKey', // unnecessary is reCaptcha component was set up
+        'siteKey' => 'your siteKey', // unnecessary if reCaptcha component was set up
     ]
 ) ?>
 ```
@@ -123,7 +123,7 @@ v3
 <?= $form->field($model, 'reCaptcha')->widget(
     \himiklab\yii2\recaptcha\ReCaptcha3::class,
     [
-        'siteKey' => 'your siteKey', // unnecessary is reCaptcha component was set up
+        'siteKey' => 'your siteKey', // unnecessary if reCaptcha component was set up
         'action' => 'homepage',
     ]
 ) ?>
