@@ -98,16 +98,19 @@ class ReCaptcha3 extends InputWidget
         $view->registerJs(
             <<<JS
 "use strict";
-grecaptcha.ready(function() {
-    grecaptcha.execute("{$this->siteKey}", {action: "{$this->action}"}).then(function(token) {
-        jQuery("#" + "{$this->getReCaptchaId()}").val(token);
-
-        const jsCallback = "{$this->jsCallback}";
-        if (jsCallback) {
-            eval("(" + jsCallback + ")(token)");
-        }
-    });
-});
+function setToken(){
+	grecaptcha.ready(function() {
+		grecaptcha.execute("{$this->siteKey}", {action: "{$this->action}"}).then(function(token) {
+			jQuery("#" + "{$this->getReCaptchaId()}").val(token);
+			const jsCallback = "{$this->jsCallback}";
+			if (jsCallback) {
+				eval("(" + jsCallback + ")(token)");
+			}
+		});
+	});
+}
+setToken();
+var timer = setInterval(setToken, 110000);
 JS
             , $view::POS_READY);
 
